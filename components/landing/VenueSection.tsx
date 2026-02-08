@@ -149,7 +149,7 @@ export function VenueSection() {
                                             className="text-wedding-champagne text-2xl font-semibold mb-3"
                                             style={{ fontFamily: "var(--font-display)" }}
                                         >
-                                            2:30 PM
+                                            2:00 PM
                                         </p>
 
                                         <p
