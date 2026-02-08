@@ -6,7 +6,7 @@ import { CandleGlowSpots } from "@/components/ui/CandlelightParticles";
 
 export function EntourageSection() {
     const principalSponsors = [
-        { male: "Mr. Ulysiss Tundag", female: "Ms. Kristine Amin Yu Darlucio" },
+        { male: "Dr.Benjamin Yu", female: "Ms. Kristine Amin Yu - Darlucio" },
         { male: "Mr. John Rojas", female: "Mrs. Loida Rojas" },
         { male: "Mr. Jerry Battung", female: "Mrs. Mary Ann Battung" },
         { male: "Mr. Ryan Ondoy", female: "Mrs. Kitchie Ondoy" },
@@ -16,7 +16,8 @@ export function EntourageSection() {
         { male: "Mr. Julius Tiquia", female: "Mrs. Fredizminda Tiquia" },
         { male: "Mr. Froilan Patelo", female: "Mrs. Jenny Patelo" },
         { male: "Mr. Oscar Gestiada", female: "Ms. Jenny Galves" },
-        { male: "Mr. Ferdinand Patelo", female: "Ms. Sally Belmonte" },
+        { male: "Mr. Ferdinand Patelo", female: "Ms. Jeneth Patelo" },
+        { male: "Mr. Ulysiss Tundag", female: "Ms. Sally Belmonte" },
     ];
 
     const bestMenMaidsOfHonor = [
