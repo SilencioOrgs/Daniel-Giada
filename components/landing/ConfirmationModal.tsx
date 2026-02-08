@@ -86,10 +86,10 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                                             <MapPin className="text-wedding-red mt-0.5 flex-shrink-0" size={16} />
                                             <div>
                                                 <p className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
-                                                    San Lorenzo Ruiz Parish Church
+                                                    St. Nicholas of Tolentine Parish Cathedral
                                                 </p>
                                                 <p className="text-wedding-slate text-xs" style={{ fontFamily: "var(--font-body)" }}>
-                                                    San Vicente, Tarlac City
+                                                    Cabanatuan City
                                                 </p>
                                             </div>
                                         </div>
@@ -100,7 +100,7 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                                                     February 14, 2026
                                                 </p>
                                                 <p className="text-wedding-slate text-xs" style={{ fontFamily: "var(--font-body)" }}>
-                                                    Ceremony: 3:00 PM • Reception: 5:00 PM
+                                                    Ceremony: 2:00 PM • Reception: 4:30 PM
                                                 </p>
                                             </div>
                                         </div>
