@@ -460,7 +460,7 @@ export function EntourageSection() {
                                     <div>
                                         <p className="text-wedding-gold text-xs tracking-[0.15em] uppercase mb-1" style={{ fontFamily: "var(--font-ornate)" }}>Flower Girl</p>
                                         <p className="text-wedding-pearl text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                                            Mary Zyle Tundag
+                                            Mary Zyle Gonzales
                                         </p>
                                     </div>
                                     <div>
