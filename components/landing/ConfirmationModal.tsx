@@ -97,7 +97,7 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                                             <Clock className="text-wedding-red mt-0.5 flex-shrink-0" size={16} />
                                             <div>
                                                 <p className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
-                                                    February 14, 2026
+                                                    June 20, 2026
                                                 </p>
                                                 <p className="text-wedding-slate text-xs" style={{ fontFamily: "var(--font-body)" }}>
                                                     Ceremony: 2:00 PM • Reception: 4:30 PM
