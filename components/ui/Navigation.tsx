@@ -60,18 +60,20 @@ export function Navigation() {
                             ))}
                         </div>
 
-                        {/* Logo - D & G Monogram */}
+                        {/* Logo - Monogram Image */}
                         <a
                             href="#home"
                             className="relative group px-4"
                         >
-                            <span
-                                className={`text-3xl md:text-4xl tracking-tight transition-colors duration-300 ${isScrolled ? "text-white" : "text-white"
-                                    }`}
-                                style={{ fontFamily: "var(--font-script)" }}
-                            >
-                                {WEDDING_DETAILS.couple.initials}
-                            </span>
+                            <div className="relative w-12 h-12 md:w-16 md:h-16">
+                                {/* Use generic img tag for simplicity if next/image causes issues with static export, 
+                                    but here next/image is preferred. Accessing public folder directly. */}
+                                <img
+                                    src="/Picture1.png"
+                                    alt={WEDDING_DETAILS.couple.initials}
+                                    className="object-contain w-full h-full drop-shadow-lg"
+                                />
+                            </div>
                         </a>
 
                         {/* Desktop Right Links */}
@@ -136,16 +138,19 @@ export function Navigation() {
                             <X size={24} />
                         </button>
 
-                        {/* Monogram */}
-                        <motion.p
-                            className="text-white text-5xl mb-12 relative z-10"
-                            style={{ fontFamily: "var(--font-script)" }}
+                        {/* Monogram Image */}
+                        <motion.div
+                            className="relative w-32 h-32 mb-12 z-10"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.1 }}
                         >
-                            {WEDDING_DETAILS.couple.initials}
-                        </motion.p>
+                            <img
+                                src="/Picture1.png"
+                                alt={WEDDING_DETAILS.couple.initials}
+                                className="object-contain w-full h-full drop-shadow-2xl"
+                            />
+                        </motion.div>
 
                         {/* Navigation Links */}
                         <div className="relative z-10 flex flex-col items-center space-y-8">

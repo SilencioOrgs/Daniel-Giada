@@ -8,6 +8,7 @@ export async function GET() {
             fullName: "John Marie F. Nepomuceno",
             attending: true,
             guestCount: 1,
+            baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
         })
     );
 

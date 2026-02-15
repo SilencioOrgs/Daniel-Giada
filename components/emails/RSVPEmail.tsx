@@ -23,7 +23,8 @@ export default function RSVPEmail({
     fullName = "Guest",
     attending = true,
     guestCount = 1,
-}: RSVPEmailProps) {
+    baseUrl = "",
+}: RSVPEmailProps & { baseUrl?: string }) {
     const previewText = attending
         ? `Thank you for confirming your attendance, ${fullName}!`
         : `We'll miss you, ${fullName}. Thank you for letting us know.`;
@@ -45,7 +46,13 @@ export default function RSVPEmail({
                 <Container style={container}>
                     {/* Elegant Gold Header Bar */}
                     <Section style={headerBar}>
-                        <Text style={headerMonogram}>C & S</Text>
+                        <Img
+                            src={`${baseUrl}/Picture1.png`}
+                            alt="Daniel & Giada"
+                            width="80"
+                            height="80"
+                            style={{ margin: "0 auto", objectFit: "contain" }}
+                        />
                     </Section>
 
                     {/* Main Content Area */}
