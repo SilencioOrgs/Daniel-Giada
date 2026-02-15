@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { WEDDING_DETAILS } from "@/lib/mockData";
 
 export function Countdown() {
     const [timeLeft, setTimeLeft] = useState({
@@ -12,7 +13,9 @@ export function Countdown() {
     });
 
     useEffect(() => {
-        const weddingDate = new Date("2026-06-20T14:30:00").getTime();
+        // Use the date from mockData, defaulting to a specific time if not present
+        const weddingDateStr = `${WEDDING_DETAILS.date.month} ${WEDDING_DETAILS.date.day}, ${WEDDING_DETAILS.date.year} 14:00:00`;
+        const weddingDate = new Date(weddingDateStr).getTime();
 
         const updateCountdown = () => {
             const now = new Date().getTime();
@@ -55,13 +58,13 @@ export function Countdown() {
                         initial={{ y: -10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.3 }}
-                        className="text-wedding-pearl text-3xl md:text-5xl lg:text-6xl font-light"
+                        className="text-white text-3xl md:text-5xl lg:text-6xl font-light drop-shadow-md"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
                         {String(unit.value).padStart(2, "0")}
                     </motion.div>
                     <p
-                        className="text-wedding-gold/70 text-[10px] md:text-xs tracking-[0.2em] uppercase mt-2"
+                        className="text-silver-light/80 text-[10px] md:text-xs tracking-[0.2em] uppercase mt-2"
                         style={{ fontFamily: "var(--font-body)" }}
                     >
                         {unit.label}

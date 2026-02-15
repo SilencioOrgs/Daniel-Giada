@@ -87,7 +87,7 @@ export function MusicPlayer() {
             {/* Music Control Button - Bottom Right */}
             <motion.button
                 onClick={togglePlay}
-                className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-wedding-jet border border-wedding-gold/30 rounded-full px-4 py-3 shadow-lg hover:bg-wedding-black transition-colors group"
+                className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-charcoal/80 backdrop-blur-md border border-silver/30 rounded-full px-4 py-3 shadow-lg hover:bg-charcoal transition-colors group"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1, duration: 0.5 }}
@@ -100,7 +100,7 @@ export function MusicPlayer() {
                     {bars.map((bar, index) => (
                         <motion.div
                             key={bar}
-                            className="w-[3px] bg-wedding-burgundy rounded-full"
+                            className="w-[3px] bg-burgundy rounded-full"
                             animate={isPlaying ? {
                                 height: ["8px", "16px", "10px", "14px", "8px"],
                             } : {
@@ -120,7 +120,7 @@ export function MusicPlayer() {
 
                 {/* Play/Pause Text */}
                 <span
-                    className="text-wedding-pearl text-xs tracking-wider uppercase hidden sm:block"
+                    className="text-silver-light text-xs tracking-wider uppercase hidden sm:block"
                     style={{ fontFamily: "var(--font-body)" }}
                 >
                     {isPlaying ? "Playing" : "Play"}

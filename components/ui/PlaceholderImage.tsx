@@ -8,25 +8,25 @@ interface PlaceholderImageProps {
 
 export function PlaceholderImage({ className = "", label = "Image", variant = "gallery" }: PlaceholderImageProps) {
     const gradients = {
-        hero: "from-wedding-charcoal via-wedding-charcoal to-wedding-charcoal",
-        venue: "from-wedding-sage via-wedding-cream to-wedding-rose",
-        story: "from-wedding-rose via-wedding-blush to-wedding-champagne",
-        gallery: "from-wedding-champagne via-wedding-pearl to-wedding-cream",
-        rsvp: "from-wedding-charcoal via-wedding-slate to-wedding-dove",
+        hero: "bg-charcoal",
+        venue: "bg-gradient-to-br from-silver-light via-off-white to-platinum",
+        story: "bg-gradient-to-br from-platinum via-silver-light to-off-white",
+        gallery: "bg-gradient-to-br from-silver-light via-platinum to-silver",
+        rsvp: "bg-gradient-to-br from-charcoal via-dark-gray to-medium-gray",
     };
 
-    // Hero variant shows plain black background without icon
+    // Hero variant shows plain black/charcoal background without icon
     if (variant === "hero") {
         return (
-            <div className={`bg-wedding-charcoal ${className}`} />
+            <div className={`bg-charcoal ${className}`} />
         );
     }
 
     return (
-        <div className={`bg-gradient-to-br ${gradients[variant]} flex items-center justify-center ${className}`}>
-            <div className="text-center opacity-50">
-                <Camera className="mx-auto mb-2 text-wedding-red" size={32} />
-                <p className="text-xs tracking-widest uppercase text-wedding-dove" style={{ fontFamily: "var(--font-body)" }}>
+        <div className={`${gradients[variant]} flex items-center justify-center ${className}`}>
+            <div className={`text-center opacity-50 ${variant === 'rsvp' ? 'text-silver' : 'text-charcoal'}`}>
+                <Camera className={`mx-auto mb-2 ${variant === 'rsvp' ? 'text-silver' : 'text-burgundy'}`} size={32} />
+                <p className="text-xs tracking-widest uppercase" style={{ fontFamily: "var(--font-body)" }}>
                     {label}
                 </p>
             </div>

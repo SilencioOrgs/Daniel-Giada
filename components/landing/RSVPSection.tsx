@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, X, Send, Loader2, Search, CheckCircle, AlertCircle } from "lucide-react";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { submitRSVP, getInvitationData, checkGuestStatus } from "@/app/actions";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { supabase } from "@/lib/supabase";
+import { SilverCard } from "@/components/ui/SilverCard";
 
 export function RSVPSection() {
     const searchParams = useSearchParams();
@@ -95,7 +95,6 @@ export function RSVPSection() {
                     filter: `id=eq.${inviteId}`,
                 },
                 (payload) => {
-                    console.log('Invitation status changed:', payload);
                     const newData = payload.new as { status?: string };
                     if (newData && newData.status === 'responded') {
                         setIsInvitationUsed(true);
@@ -207,52 +206,33 @@ export function RSVPSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm"
                         onClick={() => setShowWarningModal(false)}
                     >
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-                            className="relative z-10 w-full max-w-md bg-wedding-jet border border-wedding-burgundy/40 rounded-xl p-6 md:p-8"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <SilverCard className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
                             {/* Warning Icon */}
                             <div className="flex justify-center mb-4">
-                                <div className="w-16 h-16 rounded-full bg-wedding-burgundy/20 flex items-center justify-center">
-                                    <AlertCircle className="text-wedding-burgundy" size={32} />
+                                <div className="w-16 h-16 rounded-full bg-burgundy/10 flex items-center justify-center">
+                                    <AlertCircle className="text-burgundy" size={32} />
                                 </div>
                             </div>
 
                             {/* Title */}
-                            <h3
-                                className="text-wedding-pearl text-xl md:text-2xl text-center mb-4"
-                                style={{ fontFamily: "var(--font-display)" }}
-                            >
+                            <h3 className="text-burgundy text-xl md:text-2xl text-center mb-4 font-display">
                                 Before You Continue
                             </h3>
 
                             {/* Message */}
-                            <div className="space-y-3 mb-6">
-                                <p
-                                    className="text-wedding-gold/90 text-sm text-center leading-relaxed"
-                                    style={{ fontFamily: "var(--font-body)" }}
-                                >
-                                    This invitation link is <span className="text-wedding-burgundy font-semibold">exclusively for you</span>.
+                            <div className="space-y-4 mb-6">
+                                <p className="text-charcoal text-sm text-center leading-relaxed">
+                                    This invitation link is <span className="text-burgundy font-semibold">exclusively for you</span>.
                                 </p>
-                                <div className="bg-wedding-burgundy/10 border border-wedding-burgundy/30 rounded-lg p-4">
-                                    <p
-                                        className="text-wedding-gold text-xs text-center leading-relaxed"
-                                        style={{ fontFamily: "var(--font-body)" }}
-                                    >
-                                        ⚠️ <strong>Please do not share this link.</strong> If someone else submits using your link first, you won&apos;t be able to send your RSVP.
+                                <div className="bg-silver-light/30 border border-silver/30 rounded-lg p-4">
+                                    <p className="text-charcoal text-xs text-center leading-relaxed font-medium">
+                                        ⚠️ <strong>Please do not share this link.</strong> If someone else submits using your link first, you won't be able to send your RSVP.
                                     </p>
                                 </div>
-                                <p
-                                    className="text-wedding-gold/70 text-xs text-center"
-                                    style={{ fontFamily: "var(--font-body)" }}
-                                >
+                                <p className="text-medium-gray text-xs text-center">
                                     This link can only be used once.
                                 </p>
                             </div>
@@ -261,8 +241,7 @@ export function RSVPSection() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setShowWarningModal(false)}
-                                    className="flex-1 py-3 px-4 border border-wedding-gold/30 text-wedding-gold/70 rounded-lg text-sm hover:bg-wedding-gold/10 transition-colors"
-                                    style={{ fontFamily: "var(--font-body)" }}
+                                    className="flex-1 py-3 px-4 border border-silver text-charcoal rounded-lg text-sm hover:bg-silver-light transition-colors"
                                 >
                                     Cancel
                                 </button>
@@ -271,13 +250,12 @@ export function RSVPSection() {
                                         setShowWarningModal(false);
                                         setShowFormModal(true);
                                     }}
-                                    className="flex-1 py-3 px-4 bg-wedding-burgundy text-wedding-gold rounded-lg text-sm font-bold hover:bg-wedding-burgundy-dark transition-colors"
-                                    style={{ fontFamily: "var(--font-body)" }}
+                                    className="flex-1 py-3 px-4 bg-burgundy text-white rounded-lg text-sm font-bold hover:bg-burgundy-dark transition-colors shadow-md"
                                 >
                                     I Understand
                                 </button>
                             </div>
-                        </motion.div>
+                        </SilverCard>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -289,19 +267,11 @@ export function RSVPSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm"
                         onClick={() => setShowFormModal(false)}
                     >
-                        {/* Backdrop */}
-                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-
-                        {/* Modal Content */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 50 }}
-                            transition={{ type: "spring", duration: 0.5 }}
-                            className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-hidden bg-wedding-jet border border-wedding-gold/30 rounded-xl"
+                        <SilverCard
+                            className="w-full max-w-lg max-h-[90vh] overflow-hidden !p-0"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Scrollable inner container */}
@@ -309,62 +279,39 @@ export function RSVPSection() {
                                 {/* Close Button */}
                                 <button
                                     onClick={() => setShowFormModal(false)}
-                                    className="absolute top-4 right-4 text-wedding-gold/60 hover:text-wedding-pearl transition-colors"
+                                    className="absolute top-4 right-4 text-silver-dark hover:text-burgundy transition-colors z-10"
                                 >
                                     <X size={24} />
                                 </button>
 
                                 {/* Header */}
                                 <div className="text-center mb-8">
-                                    <h2
-                                        className="text-wedding-gold text-4xl md:text-5xl mb-2"
-                                        style={{ fontFamily: "var(--font-display)" }}
-                                    >
+                                    <h2 className="text-burgundy text-4xl md:text-5xl mb-2 font-display">
                                         RSVP
                                     </h2>
-                                    <p
-                                        className="text-wedding-pearl/80 text-sm"
-                                        style={{ fontFamily: "var(--font-body)" }}
-                                    >
+                                    <p className="text-medium-gray text-sm">
                                         Please respond by May 20, 2026
                                     </p>
+
                                     {/* Seat allocation notification */}
                                     {invitationId && maxGuests > 0 && (
                                         <motion.div
-                                            className="mt-4 px-6 py-3 bg-wedding-burgundy/10 border border-wedding-gold/30 rounded-lg inline-flex items-center gap-3"
+                                            className="mt-4 px-6 py-3 bg-silver-light/30 border border-silver/30 rounded-lg inline-flex items-center gap-3"
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.2 }}
                                         >
-                                            <motion.span
-                                                animate={{
-                                                    scale: [1, 1.2, 1, 1.1, 1],
-                                                }}
-                                                transition={{
-                                                    duration: 1.5,
-                                                    repeat: Infinity,
-                                                    repeatDelay: 1,
-                                                }}
-                                                className="text-xl"
-                                            >
-                                                ❤️
-                                            </motion.span>
-                                            <p
-                                                className="text-wedding-pearl text-sm md:text-base"
-                                                style={{ fontFamily: "var(--font-body)" }}
-                                            >
-                                                We have allotted <span className="text-wedding-gold font-bold text-base md:text-lg">{maxGuests} {maxGuests === 1 ? 'seat' : 'seats'}</span> for you
+                                            <span className="text-xl">❤️</span>
+                                            <p className="text-charcoal text-sm md:text-base">
+                                                We have allotted <span className="text-burgundy font-bold text-base md:text-lg">{maxGuests} {maxGuests === 1 ? 'seat' : 'seats'}</span> for you
                                             </p>
                                         </motion.div>
                                     )}
                                     {/* Loading invitation indicator */}
                                     {isLoadingInvitation && (
                                         <div className="flex items-center justify-center gap-2 mt-3">
-                                            <Loader2 className="animate-spin text-wedding-burgundy" size={16} />
-                                            <span
-                                                className="text-wedding-burgundy/80 text-xs"
-                                                style={{ fontFamily: "var(--font-body)" }}
-                                            >
+                                            <Loader2 className="animate-spin text-burgundy" size={16} />
+                                            <span className="text-burgundy text-xs">
                                                 Loading invitation details...
                                             </span>
                                         </div>
@@ -375,11 +322,8 @@ export function RSVPSection() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {/* Full Name */}
                                     <div>
-                                        <label
-                                            className="block text-wedding-gold text-xs tracking-[0.2em] uppercase mb-2"
-                                            style={{ fontFamily: "var(--font-body)" }}
-                                        >
-                                            Your Full Name <span className="text-wedding-gold">*</span>
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2">
+                                            Your Full Name <span className="text-burgundy">*</span>
                                         </label>
                                         <div className="relative">
                                             <input
@@ -388,15 +332,14 @@ export function RSVPSection() {
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                                 readOnly={!!invitationId}
-                                                className={`w-full bg-transparent border-b-2 text-wedding-pearl py-3 focus:outline-none transition-all duration-300 placeholder:text-wedding-pearl/50 ${invitationId
-                                                        ? "border-wedding-gold/60 cursor-not-allowed opacity-80"
-                                                        : "border-wedding-gold/40 focus:border-wedding-gold"
+                                                className={`w-full bg-transparent border-b-2 text-charcoal py-3 focus:outline-none transition-all duration-300 placeholder:text-silver-dark/50 ${invitationId
+                                                    ? "border-silver/60 cursor-not-allowed opacity-80"
+                                                    : "border-silver/40 focus:border-burgundy"
                                                     }`}
-                                                style={{ fontFamily: "var(--font-body)" }}
                                                 placeholder="Enter your full name"
                                             />
                                             {invitationId && (
-                                                <div className="absolute right-0 top-1/2 -translate-y-1/2 text-wedding-gold/60 text-xs italic flex items-center gap-1">
+                                                <div className="absolute right-0 top-1/2 -translate-y-1/2 text-silver-dark/60 text-xs italic flex items-center gap-1">
                                                     <span>(Locked)</span>
                                                 </div>
                                             )}
@@ -405,40 +348,32 @@ export function RSVPSection() {
 
                                     {/* Email */}
                                     <div>
-                                        <label
-                                            className="block text-wedding-gold text-xs tracking-[0.2em] uppercase mb-2"
-                                            style={{ fontFamily: "var(--font-body)" }}
-                                        >
-                                            Email Address <span className="text-wedding-gold">*</span>
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2">
+                                            Email Address <span className="text-burgundy">*</span>
                                         </label>
                                         <input
                                             type="email"
                                             required
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full bg-transparent border-b-2 border-wedding-gold/40 text-wedding-pearl py-3 focus:border-wedding-gold focus:outline-none transition-all duration-300 placeholder:text-wedding-pearl/50"
-                                            style={{ fontFamily: "var(--font-body)" }}
+                                            className="w-full bg-transparent border-b-2 border-silver/40 text-charcoal py-3 focus:border-burgundy focus:outline-none transition-all duration-300 placeholder:text-silver-dark/50"
                                             placeholder="your.email@example.com"
                                         />
                                     </div>
 
                                     {/* Number of Guests */}
                                     <div>
-                                        <label
-                                            className="block text-wedding-gold text-xs tracking-[0.2em] uppercase mb-2"
-                                            style={{ fontFamily: "var(--font-body)" }}
-                                        >
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2">
                                             Number of Guests
                                         </label>
                                         <select
                                             value={formData.guests}
                                             onChange={handleGuestsChange}
-                                            className="w-full bg-transparent border-b-2 border-wedding-gold/40 text-wedding-pearl py-3 focus:border-wedding-gold focus:outline-none transition-all duration-300 cursor-pointer"
-                                            style={{ fontFamily: "var(--font-body)" }}
+                                            className="w-full bg-transparent border-b-2 border-silver/40 text-charcoal py-3 focus:border-burgundy focus:outline-none transition-all duration-300 cursor-pointer"
                                             disabled={isLoadingInvitation}
                                         >
                                             {guestOptions.map((num) => (
-                                                <option key={num} value={num.toString()} className="bg-wedding-jet">
+                                                <option key={num} value={num.toString()} className="bg-white text-charcoal">
                                                     {num === 1
                                                         ? "1 Guest (Just me)"
                                                         : `${num} Guests (Me + ${num - 1})`}
@@ -449,14 +384,11 @@ export function RSVPSection() {
 
                                     {/* Additional Guests Inputs */}
                                     {parseInt(formData.guests) > 1 && (
-                                        <div className="space-y-4 pl-4 border-l-2 border-wedding-gold/20 ml-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="space-y-4 pl-4 border-l-2 border-burgundy/20 ml-1 animate-in fade-in slide-in-from-top-2 duration-300">
                                             {additionalGuests.map((name, index) => (
                                                 <div key={index}>
-                                                    <label
-                                                        className="block text-wedding-gold/70 text-[10px] tracking-[0.2em] uppercase mb-1"
-                                                        style={{ fontFamily: "var(--font-body)" }}
-                                                    >
-                                                        Guest {index + 2} Name <span className="text-wedding-gold">*</span>
+                                                    <label className="block text-silver-dark/70 text-[10px] tracking-[0.2em] uppercase mb-1">
+                                                        Guest {index + 2} Name <span className="text-burgundy">*</span>
                                                     </label>
                                                     <input
                                                         type="text"
@@ -464,8 +396,7 @@ export function RSVPSection() {
                                                         value={name}
                                                         onChange={(e) => handleGuestNameChange(index, e.target.value)}
                                                         placeholder={`Full Name of Guest ${index + 2}`}
-                                                        className="w-full bg-transparent border-b border-wedding-gold/20 text-wedding-pearl py-2 text-sm focus:border-wedding-gold focus:outline-none transition-all duration-300 placeholder:text-wedding-pearl/30"
-                                                        style={{ fontFamily: "var(--font-body)" }}
+                                                        className="w-full bg-transparent border-b border-silver/20 text-charcoal py-2 text-sm focus:border-burgundy focus:outline-none transition-all duration-300 placeholder:text-silver-dark/30"
                                                     />
                                                 </div>
                                             ))}
@@ -474,17 +405,14 @@ export function RSVPSection() {
 
                                     {/* Attendance - Radio Buttons */}
                                     <div>
-                                        <label
-                                            className="block text-wedding-gold text-xs tracking-[0.2em] uppercase mb-4"
-                                            style={{ fontFamily: "var(--font-body)" }}
-                                        >
-                                            Will You Attend? <span className="text-wedding-gold">*</span>
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-4">
+                                            Will You Attend? <span className="text-burgundy">*</span>
                                         </label>
                                         <div className="flex gap-4">
                                             <label
                                                 className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all duration-300 ${formData.attending === "yes"
-                                                    ? "border-wedding-gold bg-wedding-gold/20"
-                                                    : "border-wedding-gold/30 hover:border-wedding-gold/60"
+                                                    ? "border-burgundy bg-burgundy/10"
+                                                    : "border-silver/30 hover:border-burgundy/60"
                                                     }`}
                                             >
                                                 <input
@@ -497,22 +425,19 @@ export function RSVPSection() {
                                                     required
                                                 />
                                                 <Heart
-                                                    className={`${formData.attending === "yes" ? "text-wedding-gold" : "text-wedding-gold/50"}`}
+                                                    className={`${formData.attending === "yes" ? "text-burgundy" : "text-silver-dark/50"}`}
                                                     size={18}
                                                     fill={formData.attending === "yes" ? "currentColor" : "none"}
                                                 />
-                                                <span
-                                                    className={`text-xs ${formData.attending === "yes" ? "text-wedding-pearl" : "text-wedding-gold/70"}`}
-                                                    style={{ fontFamily: "var(--font-body)" }}
-                                                >
+                                                <span className={`text-xs ${formData.attending === "yes" ? "text-burgundy font-bold" : "text-charcoal"}`}>
                                                     Accepting
                                                 </span>
                                             </label>
 
                                             <label
                                                 className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all duration-300 ${formData.attending === "no"
-                                                    ? "border-wedding-gold/60 bg-wedding-gold/10"
-                                                    : "border-wedding-gold/30 hover:border-wedding-gold/60"
+                                                    ? "border-charcoal/60 bg-charcoal/5"
+                                                    : "border-silver/30 hover:border-charcoal/60"
                                                     }`}
                                             >
                                                 <input
@@ -524,13 +449,10 @@ export function RSVPSection() {
                                                     className="sr-only"
                                                 />
                                                 <X
-                                                    className={`${formData.attending === "no" ? "text-wedding-gold/80" : "text-wedding-gold/50"}`}
+                                                    className={`${formData.attending === "no" ? "text-charcoal" : "text-silver-dark/50"}`}
                                                     size={18}
                                                 />
-                                                <span
-                                                    className={`text-xs ${formData.attending === "no" ? "text-wedding-pearl" : "text-wedding-gold/70"}`}
-                                                    style={{ fontFamily: "var(--font-body)" }}
-                                                >
+                                                <span className={`text-xs ${formData.attending === "no" ? "text-charcoal font-bold" : "text-charcoal"}`}>
                                                     Declining
                                                 </span>
                                             </label>
@@ -539,18 +461,14 @@ export function RSVPSection() {
 
                                     {/* Message */}
                                     <div>
-                                        <label
-                                            className="block text-wedding-gold text-xs tracking-[0.2em] uppercase mb-2"
-                                            style={{ fontFamily: "var(--font-body)" }}
-                                        >
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2">
                                             Message (Optional)
                                         </label>
                                         <textarea
                                             value={formData.message}
                                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                             rows={3}
-                                            className="w-full bg-transparent border-b-2 border-wedding-gold/40 text-wedding-pearl py-3 focus:border-wedding-gold focus:outline-none transition-all duration-300 resize-none placeholder:text-wedding-pearl/50"
-                                            style={{ fontFamily: "var(--font-body)" }}
+                                            className="w-full bg-transparent border-b-2 border-silver/40 text-charcoal py-3 focus:border-burgundy focus:outline-none transition-all duration-300 resize-none placeholder:text-silver-dark/50"
                                             placeholder="Share your wishes..."
                                         />
                                     </div>
@@ -560,12 +478,9 @@ export function RSVPSection() {
                                         <motion.div
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="bg-wedding-burgundy/20 border border-wedding-burgundy/40 rounded-lg p-3"
+                                            className="bg-red-50 border border-red-200 rounded-lg p-3"
                                         >
-                                            <p
-                                                className="text-wedding-burgundy-light text-sm text-center"
-                                                style={{ fontFamily: "var(--font-body)" }}
-                                            >
+                                            <p className="text-red-500 text-sm text-center">
                                                 {error}
                                             </p>
                                         </motion.div>
@@ -577,34 +492,14 @@ export function RSVPSection() {
                                         disabled={isSubmitting}
                                         whileHover={!isSubmitting ? { scale: 1.02 } : {}}
                                         whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-                                        className={`w-full bg-wedding-burgundy text-wedding-gold py-4 text-sm tracking-[0.2em] uppercase font-bold transition-all duration-300 flex items-center justify-center gap-3 rounded-lg shadow-xl ${isSubmitting
+                                        className={`w-full bg-burgundy text-white py-4 text-sm tracking-[0.2em] uppercase font-bold transition-all duration-300 flex items-center justify-center gap-3 rounded-lg shadow-xl ${isSubmitting
                                             ? "opacity-70 cursor-not-allowed"
-                                            : "hover:bg-wedding-burgundy-dark"
+                                            : "hover:bg-burgundy-dark"
                                             }`}
-                                        style={{ fontFamily: "var(--font-body)" }}
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                <svg
-                                                    className="animate-spin h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <circle
-                                                        className="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        strokeWidth="4"
-                                                    />
-                                                    <path
-                                                        className="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    />
-                                                </svg>
+                                                <Loader2 className="animate-spin" size={16} />
                                                 Sending...
                                             </>
                                         ) : (
@@ -616,7 +511,7 @@ export function RSVPSection() {
                                     </motion.button>
                                 </form>
                             </div>
-                        </motion.div>
+                        </SilverCard>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -628,51 +523,42 @@ export function RSVPSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm"
                         onClick={() => setShowStatusModal(false)}
                     >
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="relative w-full max-w-md bg-wedding-jet border border-wedding-gold/30 rounded-xl p-6 md:p-8"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <SilverCard className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
                             <button
                                 onClick={() => setShowStatusModal(false)}
-                                className="absolute top-4 right-4 text-wedding-gold/60 hover:text-wedding-pearl transition-colors"
+                                className="absolute top-4 right-4 text-silver-dark hover:text-burgundy transition-colors"
                             >
                                 <X size={20} />
                             </button>
 
-                            <h3
-                                className="text-wedding-gold text-2xl mb-6 text-center"
-                                style={{ fontFamily: "var(--font-display)" }}
-                            >
+                            <h3 className="text-burgundy text-2xl mb-6 text-center font-display">
                                 Check Your RSVP
                             </h3>
 
                             {!statusResult ? (
                                 <form onSubmit={handleCheckStatus} className="space-y-4">
                                     <div>
-                                        <label className="block text-wedding-burgundy text-xs tracking-[0.2em] uppercase mb-2">
+                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2">
                                             Email or Full Name
                                         </label>
                                         <div className="relative">
-                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-wedding-gold/40" size={18} />
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-silver-dark/40" size={18} />
                                             <input
                                                 type="text"
                                                 value={statusQuery}
                                                 onChange={(e) => setStatusQuery(e.target.value)}
                                                 placeholder="Enter your email or name"
-                                                className="w-full bg-transparent border border-wedding-gold/20 rounded-lg py-3 pl-10 pr-4 text-wedding-pearl focus:border-wedding-burgundy focus:outline-none transition-colors placeholder:text-wedding-pearl/30"
+                                                className="w-full bg-transparent border border-silver/30 rounded-lg py-3 pl-10 pr-4 text-charcoal focus:border-burgundy focus:outline-none transition-colors placeholder:text-silver-dark/30"
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     {statusError && (
-                                        <div className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                                        <div className="flex items-center gap-2 text-red-500 text-xs bg-red-50 p-3 rounded-lg border border-red-100">
                                             <AlertCircle size={14} />
                                             {statusError}
                                         </div>
@@ -681,7 +567,7 @@ export function RSVPSection() {
                                     <button
                                         type="submit"
                                         disabled={isCheckingStatus}
-                                        className="w-full bg-wedding-burgundy text-wedding-gold py-3 rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-wedding-burgundy-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                        className="w-full bg-burgundy text-white py-3 rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-burgundy-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
                                     >
                                         {isCheckingStatus ? (
                                             <>
@@ -696,27 +582,27 @@ export function RSVPSection() {
                             ) : (
                                 <div className="text-center space-y-6">
                                     <div className="flex flex-col items-center gap-2">
-                                        <CheckCircle className="text-green-500" size={48} />
-                                        <h4 className="text-xl text-wedding-gold">Welcome back, {statusResult.name.split(" ")[0]}!</h4>
+                                        <CheckCircle className="text-green-600" size={48} />
+                                        <h4 className="text-xl text-burgundy">Welcome back, {statusResult.name.split(" ")[0]}!</h4>
                                     </div>
 
-                                    <div className="bg-wedding-gold/5 rounded-lg p-4 border border-wedding-gold/10 space-y-3">
+                                    <div className="bg-silver-light/30 rounded-lg p-4 border border-silver/10 space-y-3">
                                         <div className="flex justify-between items-center text-sm">
-                                            <span className="text-wedding-gold/60">Status:</span>
+                                            <span className="text-silver-dark">Status:</span>
                                             <span className={`font-bold px-2 py-1 rounded text-xs uppercase tracking-wider ${statusResult.attending
-                                                ? "bg-green-500/20 text-green-400"
-                                                : "bg-red-500/20 text-red-400"
+                                                ? "bg-green-100 text-green-700"
+                                                : "bg-red-100 text-red-700"
                                                 }`}>
                                                 {statusResult.attending ? "Confirmed" : "Declined"}
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
-                                            <span className="text-wedding-gold/60">Guests:</span>
-                                            <span className="text-wedding-pearl">{statusResult.guestCount}</span>
+                                            <span className="text-silver-dark">Guests:</span>
+                                            <span className="text-charcoal font-medium">{statusResult.guestCount}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
-                                            <span className="text-wedding-gold/60">Email:</span>
-                                            <span className="text-wedding-pearl truncate max-w-[150px]">{statusResult.email}</span>
+                                            <span className="text-silver-dark">Email:</span>
+                                            <span className="text-charcoal font-medium truncate max-w-[150px]">{statusResult.email}</span>
                                         </div>
                                     </div>
 
@@ -726,13 +612,13 @@ export function RSVPSection() {
                                             setStatusQuery("");
                                             setShowStatusModal(false);
                                         }}
-                                        className="text-wedding-gold/60 text-xs hover:text-wedding-pearl transition-colors underline underline-offset-4"
+                                        className="text-silver-dark text-xs hover:text-burgundy transition-colors underline underline-offset-4"
                                     >
                                         Need to change this? Contact the couple.
                                     </button>
                                 </div>
                             )}
-                        </motion.div>
+                        </SilverCard>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -740,155 +626,80 @@ export function RSVPSection() {
             {/* RSVP Section - CTA Button Only */}
             <section
                 id="rsvp"
-                className="relative min-h-[70vh] flex items-center justify-center py-16 md:py-24"
+                className="relative min-h-[70vh] flex items-center justify-center py-16 md:py-24 overflow-hidden"
             >
                 {/* Background */}
-                <PlaceholderImage
-                    className="absolute inset-0 w-full h-full"
-                    label="RSVP Background"
-                    variant="rsvp"
-                />
-                <div className="absolute inset-0 bg-wedding-charcoal/85" />
+                <div className="absolute inset-0 bg-off-white" />
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay" />
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-silver-light/40 to-transparent" />
 
                 {/* Content */}
                 <motion.div
-                    className="relative z-10 text-center px-6"
+                    className="relative z-10 text-center px-6 max-w-2xl mx-auto"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
                 >
+                    <p
+                        className="text-silver-dark text-xs tracking-[0.4em] uppercase mb-4"
+                        style={{ fontFamily: "var(--font-body)" }}
+                    >
+                        Join Us
+                    </p>
                     <h2
-                        className="text-wedding-gold text-5xl md:text-6xl lg:text-7xl mb-4"
+                        className="text-burgundy text-5xl md:text-6xl lg:text-7xl mb-8"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
                         RSVP
                     </h2>
                     <p
-                        className="text-wedding-pearl/80 text-sm md:text-base mb-8 max-w-md mx-auto"
+                        className="text-charcoal text-lg mb-12 font-medium"
                         style={{ fontFamily: "var(--font-body)" }}
                     >
-                        We can&apos;t wait to celebrate with you! Please let us know if you&apos;ll be joining us.
+                        We can't wait to celebrate our special day with you! <br /> Please let us know if you'll be joining us by May 20, 2026.
                     </p>
 
                     {/* Pulsing RSVP Button */}
-                    <div className="relative">
+                    <div className="relative inline-block group">
                         <motion.button
                             id="rsvp-button"
                             onClick={() => !isInvitationUsed && setShowWarningModal(true)}
                             disabled={isInvitationUsed}
-                            className={`relative bg-wedding-burgundy border-2 border-wedding-gold text-wedding-gold px-12 md:px-16 py-4 md:py-5 text-sm md:text-base tracking-[0.2em] uppercase font-bold rounded-lg shadow-xl transition-all flex items-center gap-3 mx-auto ${isInvitationUsed
+                            className={`relative z-10 bg-burgundy border border-burgundy text-white px-12 md:px-16 py-5 md:py-6 text-sm md:text-base tracking-[0.2em] uppercase font-bold rounded-lg shadow-xl transition-all flex items-center gap-3 mx-auto ${isInvitationUsed
                                 ? "opacity-50 cursor-not-allowed grayscale"
-                                : "hover:bg-wedding-burgundy-dark hover:shadow-2xl"
+                                : "hover:bg-burgundy-dark hover:shadow-2xl hover:-translate-y-1"
                                 }`}
                             style={{ fontFamily: "var(--font-body)" }}
-                            whileHover={!isInvitationUsed ? { scale: 1.05 } : {}}
                             whileTap={!isInvitationUsed ? { scale: 0.95 } : {}}
                         >
                             {/* Pulse Ring Animation - Only if not used */}
                             {!isInvitationUsed && (
-                                <>
-                                    <motion.span
-                                        className="absolute inset-0 rounded-lg border-2 border-wedding-gold"
-                                        animate={{
-                                            scale: [1, 1.15, 1.15],
-                                            opacity: [0.8, 0, 0],
-                                        }}
-                                        transition={{
-                                            duration: 1.5,
-                                            repeat: Infinity,
-                                            ease: "easeOut",
-                                        }}
-                                    />
-                                    <motion.span
-                                        className="absolute inset-0 rounded-lg border-2 border-wedding-gold/50"
-                                        animate={{
-                                            scale: [1, 1.25, 1.25],
-                                            opacity: [0.5, 0, 0],
-                                        }}
-                                        transition={{
-                                            duration: 1.5,
-                                            repeat: Infinity,
-                                            ease: "easeOut",
-                                            delay: 0.3,
-                                        }}
-                                    />
-                                </>
+                                <span className="absolute -inset-2 rounded-lg border border-burgundy opacity-40 animate-ping" />
                             )}
 
-                            {/* Send icon - empty space for plane to land */}
-                            <motion.span
-                                className="relative z-10 w-[18px] h-[18px] flex items-center justify-center"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 1.5, duration: 0.5 }}
-                            >
-                                <Send size={18} style={{ transform: "rotate(-45deg)" }} />
-                            </motion.span>
-                            <span className="relative z-10">
-                                {isInvitationUsed ? "Invitation Used" : "Respond Now"}
-                            </span>
+                            {isInvitationUsed ? (
+                                <>
+                                    <CheckCircle size={20} />
+                                    RSVP Sent
+                                </>
+                            ) : (
+                                <>
+                                    <Send size={20} className={!isInvitationUsed ? "group-hover:translate-x-1 transition-transform" : ""} />
+                                    Respond Now
+                                </>
+                            )}
                         </motion.button>
-
-                        {/* Used Invitation Warning */}
-                        {isInvitationUsed && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="mt-6 p-4 bg-wedding-burgundy/10 border border-wedding-burgundy/30 rounded-lg max-w-md mx-auto backdrop-blur-sm"
-                            >
-                                <p className="text-wedding-pearl/90 text-sm flex flex-col md:flex-row items-center justify-center gap-2 text-center">
-                                    <AlertCircle size={16} className="text-wedding-burgundy shrink-0" />
-                                    <span>This invitation has already been used. Please contact the couple if you need to change your response.</span>
-                                </p>
-                            </motion.div>
-                        )}
                     </div>
 
                     {/* Check Status Link */}
-                    <motion.div
-                        className="mt-6 text-center"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                    >
+                    <div className="mt-12">
                         <button
                             onClick={() => setShowStatusModal(true)}
-                            className="text-wedding-gold/60 hover:text-wedding-pearl text-xs md:text-sm underline underline-offset-4 transition-colors flex items-center justify-center gap-2 mx-auto group"
-                            style={{ fontFamily: "var(--font-body)" }}
+                            className="text-silver-dark text-sm hover:text-burgundy transition-colors underline underline-offset-4"
                         >
-                            <Search size={14} className="group-hover:scale-110 transition-transform" />
-                            Already responded? Check your status here.
+                            Already responded? Check your status
                         </button>
-                    </motion.div>
-
-                    {/* Gift Message */}
-                    <motion.p
-                        className="text-wedding-gold/50 text-s mt-10 max-w-sm mx-auto italic leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 }}
-                        style={{ fontFamily: "var(--font-body)" }}
-                    >
-                        &ldquo;Your presence is already a gift, but if you wish to give, a monetary contribution will help us start our new chapter.&rdquo;
-                    </motion.p>
-
-                    {/* Heart Icon */}
-                    <div className="flex justify-center mt-6">
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.2, 1],
-                            }}
-                            transition={{
-                                duration: 0.8,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                        >
-                            <Heart className="text-wedding-gold" size={20} fill="currentColor" />
-                        </motion.div>
                     </div>
                 </motion.div>
             </section>

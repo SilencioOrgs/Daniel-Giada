@@ -1,30 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, PlayCircle } from "lucide-react";
 import { Countdown } from "@/components/ui/Countdown";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import { OrnateFrame, FloralScroll } from "@/components/ui/OrnateFrame";
+import { SilverCard } from "@/components/ui/SilverCard";
 import { VideoModal } from "@/components/ui/VideoModal";
+import { WEDDING_DETAILS } from "@/lib/mockData";
 
 export function HeroSection() {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showVideo, setShowVideo] = useState(false);
-
-    const hashtags = [
-        "#GodsRemarCARLbleGiftforSHANIA",
-        "#SaksiAngLangitSatin",
-    ];
-
-    // Image carousel auto-cycling (placeholder version - just cycles through indices)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prev) => (prev + 1) % 3);
-        }, 5000); // Change every 5 seconds
-
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <>
@@ -35,42 +20,22 @@ export function HeroSection() {
                     videoSrc="/wedding_vid.mp4"
                 />
 
-                {/* Victorian Burgundy Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-wedding-burgundy-dark via-wedding-maroon to-wedding-wine" />
+                {/* Silver Gradient Background */}
+                <div className="absolute inset-0 silver-gradient" />
 
-                {/* Background Video (Low Opacity) */}
-                <div className="absolute inset-0 overflow-hidden">
-                    <video
-                        src="/wedding_preview.mp4"
-                        className="w-full h-full object-cover opacity-70 mix-blend-overlay"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                    />
-                </div>
+                {/* Background Pattern (Optional - Subtle) */}
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay" />
 
-                {/* Simple Overlay for text readability (replaces expensive blur/vignette layers) */}
-                <div className="absolute inset-0 bg-black/30" />
-
-                {/* Chandelier light effect (static gradient is cheap) */}
-                <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        background: "radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.15) 0%, transparent 50%)"
-                    }}
-                />
-
-                {/* Content - FRAME CENTERED, COUNTDOWN/HASHTAGS AT BOTTOM */}
+                {/* Content - FRAME CENTERED */}
                 <div className="absolute inset-0 flex items-center justify-center px-4 md:px-12 lg:px-24 pt-20 md:pt-24 pb-28 md:pb-36 overflow-hidden">
-                    <div className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl hero-frame-content">
-                        <OrnateFrame variant="primary" className="w-full mx-auto">
+                    <div className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl">
+                        <SilverCard variant="minimal" className="w-full mx-auto border-none">
                             {/* Welcome Text */}
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3, duration: 0.8 }}
-                                className="text-wedding-gold text-xl md:text-2xl lg:text-3xl tracking-wider mb-2 text-center"
+                                className="text-burgundy text-xl md:text-2xl lg:text-3xl tracking-wider mb-2 text-center"
                                 style={{ fontFamily: "var(--font-display)" }}
                             >
                                 Welcome
@@ -81,51 +46,55 @@ export function HeroSection() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5, duration: 0.8 }}
-                                className="text-wedding-champagne text-xs md:text-sm tracking-[0.4em] uppercase mb-4 md:mb-6 text-center"
-                                style={{ fontFamily: "var(--font-ornate)" }}
+                                className="text-silver-dark text-xs md:text-sm tracking-[0.4em] uppercase mb-4 md:mb-8 text-center"
+                                style={{ fontFamily: "var(--font-body)" }}
                             >
                                 To The Wedding Of
                             </motion.p>
 
                             {/* Names - Script Style */}
-                            <motion.h1
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.7, duration: 1 }}
-                                className="text-wedding-gold text-4xl md:text-6xl lg:text-7xl mb-1 md:mb-2 text-center"
-                                style={{ fontFamily: "var(--font-script)" }}
-                            >
-                                Carl Joseph
-                            </motion.h1>
+                            <div className="flex flex-col md:gap-2 items-center justify-center">
+                                <motion.h1
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 0.7, duration: 1 }}
+                                    className="text-burgundy text-6xl md:text-7xl lg:text-8xl mb-2 text-center"
+                                    style={{ fontFamily: "var(--font-script)" }}
+                                >
+                                    {WEDDING_DETAILS.couple.groom}
+                                </motion.h1>
 
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.9, duration: 0.6 }}
-                                className="text-wedding-champagne text-2xl md:text-3xl my-1 md:my-2 text-center"
-                                style={{ fontFamily: "var(--font-script)" }}
-                            >
-                                &
-                            </motion.p>
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.9, duration: 0.6 }}
+                                    className="text-silver-dark text-3xl md:text-4xl my-2 text-center"
+                                    style={{ fontFamily: "var(--font-script)" }}
+                                >
+                                    &
+                                </motion.p>
 
-                            <motion.h1
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 1.1, duration: 1 }}
-                                className="text-wedding-gold text-4xl md:text-6xl lg:text-7xl mb-4 md:mb-6 text-center"
-                                style={{ fontFamily: "var(--font-script)" }}
-                            >
-                                Shania Mae
-                            </motion.h1>
+                                <motion.h1
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 1.1, duration: 1 }}
+                                    className="text-burgundy text-6xl md:text-7xl lg:text-8xl mb-8 text-center"
+                                    style={{ fontFamily: "var(--font-script)" }}
+                                >
+                                    {WEDDING_DETAILS.couple.bride}
+                                </motion.h1>
+                            </div>
 
-                            {/* Decorative Divider */}
+                            {/* Geometric Divider */}
                             <motion.div
                                 initial={{ opacity: 0, scaleX: 0 }}
                                 animate={{ opacity: 1, scaleX: 1 }}
                                 transition={{ delay: 1.3, duration: 0.8 }}
-                                className="mb-4 md:mb-6 flex justify-center"
+                                className="flex items-center justify-center gap-4 mb-8"
                             >
-                                <FloralScroll className="w-40 md:w-56 h-5 md:h-6" />
+                                <div className="h-px w-16 bg-silver" />
+                                <div className="w-2 h-2 bg-silver rotate-45 transform" />
+                                <div className="h-px w-16 bg-silver" />
                             </motion.div>
 
                             {/* Date */}
@@ -133,10 +102,10 @@ export function HeroSection() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 1.4, duration: 0.6 }}
-                                className="text-wedding-champagne text-xs md:text-base tracking-[0.3em] mb-3 md:mb-4 text-center"
+                                className="text-charcoal text-sm md:text-lg tracking-[0.3em] mb-4 text-center font-medium"
                                 style={{ fontFamily: "var(--font-body)" }}
                             >
-                                JUNE 20, 2026
+                                {WEDDING_DETAILS.date.full.toUpperCase()}
                             </motion.p>
 
                             {/* Quote */}
@@ -144,7 +113,7 @@ export function HeroSection() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 1.5, duration: 0.8 }}
-                                className="text-wedding-pearl/80 text-xs md:text-sm lg:text-base italic font-light max-w-md mx-auto mb-1 text-center"
+                                className="text-medium-gray text-xs md:text-sm italic font-light max-w-md mx-auto mb-1 text-center"
                                 style={{ fontFamily: "var(--font-display)" }}
                             >
                                 &ldquo;Therefore what GOD has joined together, let no one separate&rdquo;
@@ -155,19 +124,19 @@ export function HeroSection() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 1.6, duration: 0.6 }}
-                                className="text-wedding-gold/70 text-[10px] md:text-xs text-center"
+                                className="text-silver-dark text-[10px] md:text-xs text-center"
                                 style={{ fontFamily: "var(--font-body)" }}
                             >
                                 — Mark 10:9
                             </motion.p>
-                        </OrnateFrame>
+                        </SilverCard>
                     </div>
                 </div>
 
                 {/* Bottom section - Countdown, Hashtags, Scroll (positioned absolutely) */}
                 <div className="absolute bottom-0 left-0 right-0 pb-6 md:pb-8 px-4">
                     {/* Countdown */}
-                    <div className="flex justify-center mb-3 md:mb-4">
+                    <div className="flex justify-center mb-4 md:mb-6">
                         <Countdown />
                     </div>
 
@@ -176,17 +145,14 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.8, duration: 0.6 }}
-                        className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4 md:mb-6"
+                        className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4"
                     >
-                        {hashtags.map((tag, index) => (
-                            <span
-                                key={index}
-                                className="text-wedding-champagne/80 text-[10px] md:text-xs tracking-wide italic"
-                                style={{ fontFamily: "var(--font-body)" }}
-                            >
-                                {tag}
-                            </span>
-                        ))}
+                        <span
+                            className="text-silver-dark text-xs md:text-sm tracking-wide italic"
+                            style={{ fontFamily: "var(--font-body)" }}
+                        >
+                            {WEDDING_DETAILS.couple.hashtag}
+                        </span>
                     </motion.div>
 
                     {/* Scroll Indicator */}
@@ -201,10 +167,10 @@ export function HeroSection() {
                             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
                             className="flex flex-col items-center"
                         >
-                            <span className="text-wedding-gold/60 text-[10px] tracking-widest uppercase mb-1" style={{ fontFamily: "var(--font-body)" }}>
+                            <span className="text-silver-dark text-[10px] tracking-widest uppercase mb-1" style={{ fontFamily: "var(--font-body)" }}>
                                 Scroll
                             </span>
-                            <ChevronDown className="text-wedding-gold/60" size={20} />
+                            <ChevronDown className="text-silver-dark" size={20} />
                         </motion.div>
                     </motion.div>
 
@@ -214,13 +180,12 @@ export function HeroSection() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 2.2, duration: 0.6 }}
                         onClick={() => setShowVideo(true)}
-                        className="absolute bottom-8 right-4 md:right-8 flex items-center gap-2 px-4 py-2 bg-wedding-black/60 border border-wedding-gold/30 rounded-full group transition-all duration-300 transform hover:scale-105"
+                        className="absolute bottom-8 right-4 md:right-8 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-silver/30 rounded-full group transition-all duration-300 transform hover:scale-105 hover:bg-white hover:shadow-lg"
                     >
                         <div className="relative">
-                            <div className="absolute inset-0 bg-wedding-gold/20 rounded-full" />
-                            <PlayCircle className="text-wedding-gold w-5 h-5 md:w-6 md:h-6 relative z-10" />
+                            <PlayCircle className="text-burgundy w-5 h-5 md:w-6 md:h-6 relative z-10" />
                         </div>
-                        <span className="text-wedding-gold/80 text-[10px] md:text-xs tracking-widest uppercase font-medium group-hover:text-wedding-gold transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+                        <span className="text-charcoal text-[10px] md:text-xs tracking-widest uppercase font-medium group-hover:text-burgundy transition-colors" style={{ fontFamily: "var(--font-body)" }}>
                             Watch Film
                         </span>
                     </motion.button>
