@@ -203,3 +203,56 @@ export async function checkRSVPStatus(email: string): Promise<GuestStatusData> {
         };
     }
 }
+
+// ============================================
+// MESSAGE BOARD MOCK STORAGE & ACTIONS
+// ============================================
+
+interface Message {
+    id: string;
+    name: string;
+    message: string;
+    created_at: string;
+}
+
+const mockMessages: Message[] = [
+    {
+        id: "1",
+        name: "Admin",
+        message: "Welcome to our wedding message board!",
+        created_at: new Date().toISOString(),
+    }
+];
+
+export async function getMessages(): Promise<{ messages: Message[] }> {
+    // Sort by newest first
+    const sortedMessages = [...mockMessages].sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    return { messages: sortedMessages };
+}
+
+export async function submitMessage(formData: FormData): Promise<{ success: boolean; message: string }> {
+    try {
+        const name = formData.get("name") as string;
+        const message = formData.get("message") as string;
+
+        if (!name || !message) {
+            return { success: false, message: "Name and message are required." };
+        }
+
+        const newMessage: Message = {
+            id: Math.random().toString(36).substring(7),
+            name: name.trim(),
+            message: message.trim(),
+            created_at: new Date().toISOString(),
+        };
+
+        mockMessages.push(newMessage);
+
+        return { success: true, message: "Message posted successfully!" };
+    } catch (error) {
+        console.error("Submit Message Error:", error);
+        return { success: false, message: "Failed to post message." };
+    }
+}
