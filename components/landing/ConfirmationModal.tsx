@@ -51,19 +51,19 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                                 >
                                     <Heart
-                                        className={`mx-auto mb-4 ${isAttending ? "text-wedding-red" : "text-wedding-dove"}`}
+                                        className={`mx-auto mb-4 ${isAttending ? "text-burgundy" : "text-silver-dark"}`}
                                         size={48}
                                         fill="currentColor"
                                     />
                                 </motion.div>
                                 <h3
-                                    className="text-wedding-charcoal text-3xl md:text-4xl mb-2"
+                                    className="text-burgundy text-3xl md:text-4xl mb-2"
                                     style={{ fontFamily: "var(--font-display)" }}
                                 >
                                     {isAttending ? "See You There!" : "We'll Miss You!"}
                                 </h3>
                                 <p
-                                    className="text-wedding-slate text-sm"
+                                    className="text-silver-dark text-sm"
                                     style={{ fontFamily: "var(--font-body)" }}
                                 >
                                     {isAttending
@@ -74,32 +74,32 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
 
                             {/* Event Details */}
                             {isAttending && (
-                                <div className="bg-wedding-pearl/50 rounded-lg p-6 mb-6">
+                                <div className="bg-silver-light/20 rounded-lg p-6 mb-6 border border-silver/30">
                                     <h4
-                                        className="text-wedding-red text-xs tracking-[0.2em] uppercase mb-4"
-                                        style={{ fontFamily: "var(--font-body)" }}
+                                        className="text-burgundy text-xs tracking-[0.2em] uppercase mb-4"
+                                        style={{ fontFamily: "var(--font-ornate)" }}
                                     >
                                         Event Details
                                     </h4>
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
-                                            <MapPin className="text-wedding-red mt-0.5 flex-shrink-0" size={16} />
+                                            <MapPin className="text-burgundy mt-0.5 flex-shrink-0" size={16} />
                                             <div>
-                                                <p className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
-                                                    St. Nicholas of Tolentine Parish Cathedral
+                                                <p className="text-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
+                                                    San Fernando De Dilao Parish Church
                                                 </p>
-                                                <p className="text-wedding-slate text-xs" style={{ fontFamily: "var(--font-body)" }}>
-                                                    Cabanatuan City
+                                                <p className="text-silver-dark text-xs" style={{ fontFamily: "var(--font-body)" }}>
+                                                    Paco, Manila
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="flex items-start gap-3">
-                                            <Clock className="text-wedding-red mt-0.5 flex-shrink-0" size={16} />
+                                            <Clock className="text-burgundy mt-0.5 flex-shrink-0" size={16} />
                                             <div>
-                                                <p className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
-                                                    June 20, 2026
+                                                <p className="text-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>
+                                                    May 16, 2026
                                                 </p>
-                                                <p className="text-wedding-slate text-xs" style={{ fontFamily: "var(--font-body)" }}>
+                                                <p className="text-silver-dark text-xs" style={{ fontFamily: "var(--font-body)" }}>
                                                     Ceremony: 2:00 PM • Reception: 4:30 PM
                                                 </p>
                                             </div>
@@ -109,36 +109,36 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                             )}
 
                             {/* RSVP Summary */}
-                            <div className="bg-wedding-pearl/50 rounded-lg p-6 mb-8">
+                            <div className="bg-silver-light/20 rounded-lg p-6 mb-8 border border-silver/30">
                                 <h4
-                                    className="text-wedding-red text-xs tracking-[0.2em] uppercase mb-4"
-                                    style={{ fontFamily: "var(--font-body)" }}
+                                    className="text-burgundy text-xs tracking-[0.2em] uppercase mb-4"
+                                    style={{ fontFamily: "var(--font-ornate)" }}
                                 >
                                     Your RSVP
                                 </h4>
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <span className="text-wedding-slate text-sm" style={{ fontFamily: "var(--font-body)" }}>Name</span>
-                                        <span className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.name}</span>
+                                        <span className="text-silver-dark text-sm" style={{ fontFamily: "var(--font-body)" }}>Name</span>
+                                        <span className="text-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.name}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-wedding-slate text-sm" style={{ fontFamily: "var(--font-body)" }}>Email</span>
-                                        <span className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.email}</span>
+                                        <span className="text-silver-dark text-sm" style={{ fontFamily: "var(--font-body)" }}>Email</span>
+                                        <span className="text-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.email}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-wedding-slate text-sm" style={{ fontFamily: "var(--font-body)" }}>Guests</span>
-                                        <span className="text-wedding-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.guests}</span>
+                                        <span className="text-silver-dark text-sm" style={{ fontFamily: "var(--font-body)" }}>Guests</span>
+                                        <span className="text-charcoal text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{formData.guests}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-wedding-slate text-sm" style={{ fontFamily: "var(--font-body)" }}>Response</span>
-                                        <span className={`text-sm font-medium ${isAttending ? "text-green-600" : "text-wedding-dove"}`} style={{ fontFamily: "var(--font-body)" }}>
+                                        <span className="text-silver-dark text-sm" style={{ fontFamily: "var(--font-body)" }}>Response</span>
+                                        <span className={`text-sm font-medium ${isAttending ? "text-green-600" : "text-silver-dark"}`} style={{ fontFamily: "var(--font-body)" }}>
                                             {isAttending ? "Attending ✨" : "Not Attending"}
                                         </span>
                                     </div>
                                     {formData.message && (
-                                        <div className="pt-2 mt-2 border-t border-wedding-champagne/30">
-                                            <span className="text-wedding-slate text-sm block mb-1" style={{ fontFamily: "var(--font-body)" }}>Message</span>
-                                            <p className="text-wedding-charcoal text-sm italic" style={{ fontFamily: "var(--font-body)" }}>
+                                        <div className="pt-2 mt-2 border-t border-silver/30">
+                                            <span className="text-silver-dark text-sm block mb-1" style={{ fontFamily: "var(--font-body)" }}>Message</span>
+                                            <p className="text-charcoal text-sm italic" style={{ fontFamily: "var(--font-body)" }}>
                                                 &ldquo;{formData.message}&rdquo;
                                             </p>
                                         </div>
@@ -149,8 +149,8 @@ export function ConfirmationModal({ isOpen, onClose, formData, showConfetti }: C
                             {/* Leave a Wish Button */}
                             <Link
                                 href="/messages"
-                                className="w-full flex items-center justify-center gap-2 bg-wedding-burgundy text-wedding-gold py-4 text-xs tracking-[0.2em] uppercase font-semibold hover:bg-wedding-burgundy-dark transition-all duration-300 rounded-lg mb-3"
-                                style={{ fontFamily: "var(--font-body)" }}
+                                className="w-full flex items-center justify-center gap-2 bg-burgundy text-white py-4 text-xs tracking-[0.2em] uppercase font-semibold hover:bg-burgundy-dark transition-all duration-300 rounded-lg mb-3"
+                                style={{ fontFamily: "var(--font-ornate)" }}
                             >
                                 <MessageSquareHeart size={16} />
                                 Leave a Wish for the Couple

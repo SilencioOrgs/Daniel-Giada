@@ -13,7 +13,7 @@ export function HeroSection() {
 
     return (
         <>
-            <section id="home" className="relative h-screen w-full overflow-hidden">
+            <section id="home" className="relative w-full min-h-screen flex flex-col overflow-hidden">
                 <VideoModal
                     isOpen={showVideo}
                     onClose={() => setShowVideo(false)}
@@ -26,8 +26,10 @@ export function HeroSection() {
                 {/* Background Pattern (Optional - Subtle) */}
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay" />
 
-                {/* Content - FRAME CENTERED */}
-                <div className="absolute inset-0 flex items-center justify-center px-4 md:px-12 lg:px-24 pt-20 md:pt-24 pb-28 md:pb-36 overflow-hidden">
+                {/* Content - FLEX COLUMN Layout */}
+
+                {/* 1. Main Center Content (Grow to fill space) */}
+                <div className="flex-grow flex items-center justify-center px-4 md:px-12 lg:px-24 pt-24 pb-8 z-10">
                     <div className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl">
                         <SilverCard variant="minimal" className="w-full mx-auto border-none">
                             {/* Welcome Text */}
@@ -133,8 +135,8 @@ export function HeroSection() {
                     </div>
                 </div>
 
-                {/* Bottom section - Countdown, Hashtags, Scroll (positioned absolutely) */}
-                <div className="absolute bottom-0 left-0 right-0 pb-6 md:pb-8 px-4">
+                {/* 2. Bottom section (Fixed height/content) - Countdown, Hashtags, Scroll */}
+                <div className="flex-shrink-0 w-full pb-6 md:pb-8 px-4 z-20">
                     {/* Countdown */}
                     <div className="flex justify-center mb-4 md:mb-6">
                         <Countdown />
@@ -148,7 +150,7 @@ export function HeroSection() {
                         className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4"
                     >
                         <span
-                            className="text-silver-dark text-xs md:text-sm tracking-wide italic"
+                            className="text-burgundy text-xs md:text-sm tracking-wide italic font-medium"
                             style={{ fontFamily: "var(--font-body)" }}
                         >
                             {WEDDING_DETAILS.couple.hashtag}
@@ -167,30 +169,15 @@ export function HeroSection() {
                             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
                             className="flex flex-col items-center"
                         >
-                            <span className="text-silver-dark text-[10px] tracking-widest uppercase mb-1" style={{ fontFamily: "var(--font-body)" }}>
+                            <span className="text-burgundy text-[10px] tracking-widest uppercase mb-1" style={{ fontFamily: "var(--font-body)" }}>
                                 Scroll
                             </span>
-                            <ChevronDown className="text-silver-dark" size={20} />
+                            <ChevronDown className="text-burgundy" size={20} />
                         </motion.div>
                     </motion.div>
-
-                    {/* Play Video Button (Bottom Right) */}
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2.2, duration: 0.6 }}
-                        onClick={() => setShowVideo(true)}
-                        className="absolute bottom-8 right-4 md:right-8 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-silver/30 rounded-full group transition-all duration-300 transform hover:scale-105 hover:bg-white hover:shadow-lg"
-                    >
-                        <div className="relative">
-                            <PlayCircle className="text-burgundy w-5 h-5 md:w-6 md:h-6 relative z-10" />
-                        </div>
-                        <span className="text-charcoal text-[10px] md:text-xs tracking-widest uppercase font-medium group-hover:text-burgundy transition-colors" style={{ fontFamily: "var(--font-body)" }}>
-                            Watch Film
-                        </span>
-                    </motion.button>
                 </div>
             </section>
+
         </>
     );
 }

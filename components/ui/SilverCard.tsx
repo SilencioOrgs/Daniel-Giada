@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 
-interface SilverCardProps {
+interface SilverCardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
     variant?: "primary" | "secondary" | "minimal";
     className?: string;
@@ -14,7 +14,8 @@ export function SilverCard({
     children,
     variant = "primary",
     className = "",
-    animate = true
+    animate = true,
+    ...props
 }: SilverCardProps) {
     const variants = {
         primary: "frosted-glass border-2 border-silver/40 rounded-2xl p-8 shadow-lg relative overflow-hidden",
@@ -23,7 +24,7 @@ export function SilverCard({
     };
 
     const content = (
-        <div className={`${variants[variant]} ${className}`}>
+        <div className={`${variants[variant]} ${className}`} {...props}>
             {/* Metallic Shine Effect for Primary Variant */}
             {variant === "primary" && (
                 <div className="absolute inset-0 metallic-shine pointer-events-none opacity-50" />

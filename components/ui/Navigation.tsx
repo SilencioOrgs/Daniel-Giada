@@ -15,7 +15,6 @@ export function Navigation() {
         { name: "Story", href: "#story" },
         { name: "Entourage", href: "#entourage" },
         { name: "Gallery", href: "#gallery" },
-        { name: "Messages", href: "/messages" },
         { name: "RSVP", href: "#rsvp" },
     ];
 
@@ -100,8 +99,8 @@ export function Navigation() {
                         <button
                             onClick={() => setIsMobileMenuOpen(true)}
                             className={`md:hidden p-2 rounded-full border transition-colors ${isScrolled
-                                    ? "text-silver border-silver/30 hover:bg-silver/10"
-                                    : "text-white border-white/30 hover:bg-white/10"
+                                ? "text-silver border-silver/30 hover:bg-silver/10"
+                                : "text-white border-white/30 hover:bg-white/10"
                                 }`}
                             aria-label="Open menu"
                         >

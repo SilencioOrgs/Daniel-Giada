@@ -104,8 +104,8 @@ export default function RSVPEmail({
 
                                 {/* Date Feature */}
                                 <Section style={dateFeature}>
-                                    <Text style={dateDay}>JUNE</Text>
-                                    <Text style={dateNumber}>20</Text>
+                                    <Text style={dateDay}>MAY</Text>
+                                    <Text style={dateNumber}>16</Text>
                                     <Text style={dateYear}>2026</Text>
                                 </Section>
 
@@ -114,37 +114,34 @@ export default function RSVPEmail({
                                     <Column style={eventColumn}>
                                         <Text style={eventIcon}>⛪</Text>
                                         <Text style={eventType}>CEREMONY</Text>
-                                        <Text style={eventTime}>2:30 PM</Text>
+                                        <Text style={eventTime}>2:00 PM</Text>
                                         <Text style={eventVenue}>
-                                            St. Nicholas of Tolentine
+                                            San Fernando De Dilao
                                         </Text>
                                         <Text style={eventAddress}>
-                                            Parish Cathedral, Cabanatuan City
+                                            Parish Church, Manila
                                         </Text>
                                     </Column>
                                     <Column style={eventColumn}>
                                         <Text style={eventIcon}>🥂</Text>
                                         <Text style={eventType}>RECEPTION</Text>
                                         <Text style={eventTime}>4:30 PM</Text>
-                                        <Text style={eventVenue}>Fave Events Place</Text>
+                                        <Text style={eventVenue}>Patio De Manila</Text>
                                         <Text style={eventAddress}>
-                                            Cabanatuan City, Nueva Ecija
+                                            Malate, Manila
                                         </Text>
                                     </Column>
                                 </Row>
 
                                 <Hr style={sectionDivider} />
 
-                                {/* Hashtags */}
+                                {/* Hashtag */}
                                 <Text style={hashtagTitle}>
                                     SHARE YOUR MOMENTS
                                 </Text>
                                 <Section style={hashtagContainer}>
                                     <Text style={hashtag}>
-                                        #GodsRemarCARLbleGiftforSHANIA
-                                    </Text>
-                                    <Text style={hashtag}>
-                                        #SaksiAngLangitSatin
+                                        #OriDANIELlyDestinedToGIADA
                                     </Text>
                                 </Section>
                             </>
@@ -157,7 +154,7 @@ export default function RSVPEmail({
                             </Text>
                             <Text style={closingText}>With love and excitement,</Text>
                             <Text style={signature}>
-                                Carl Joseph & Shania Mae
+                                Daniel & Giada
                             </Text>
                         </Section>
                     </Section>
@@ -165,7 +162,7 @@ export default function RSVPEmail({
                     {/* Footer */}
                     <Section style={footer}>
                         <Text style={footerText}>
-                            June 20, 2026 • Cabanatuan City, Nueva Ecija
+                            May 16, 2026 • Manila, Philippines
                         </Text>
                     </Section>
                 </Container>
@@ -175,95 +172,92 @@ export default function RSVPEmail({
 }
 
 // ============================================================================
-// STYLES - Premium Black & Gold Theme
+// STYLES - Silver Gray & Burgundy Theme
 // ============================================================================
 
 const main = {
-    backgroundColor: "#000000",
-    fontFamily: "'Cormorant Garamond', Georgia, serif",
+    backgroundColor: "#F5F5F5",
+    fontFamily: "'Playfair Display', Georgia, serif",
     padding: "40px 20px",
 };
 
 const container = {
-    backgroundColor: "#0A0A0A",
-    borderRadius: "0",
+    backgroundColor: "#FFFFFF",
+    borderRadius: "12px",
     margin: "0 auto",
     maxWidth: "600px",
     overflow: "hidden" as const,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
 };
 
 const headerBar = {
-    backgroundColor: "#C9A962",
-    padding: "24px 40px",
+    backgroundColor: "#800020", // Burgundy
+    padding: "32px 40px",
     textAlign: "center" as const,
 };
 
 const headerMonogram = {
-    color: "#0A0A0A",
-    fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: "28px",
-    fontWeight: "700",
-    letterSpacing: "8px",
+    color: "#FFFFFF",
+    fontFamily: "'Great Vibes', cursive",
+    fontSize: "42px",
+    fontWeight: "400",
+    letterSpacing: "4px",
     margin: "0",
 };
 
 const contentArea = {
-    backgroundColor: "#0A0A0A",
-    padding: "40px 32px",
+    backgroundColor: "#FFFFFF",
+    padding: "48px 40px",
 };
 
 const decorativeElement = {
-    color: "#C9A962",
-    fontSize: "14px",
+    color: "#C0C0C0", // Silver
+    fontSize: "16px",
     letterSpacing: "4px",
     margin: "0 0 24px",
     textAlign: "center" as const,
 };
 
 const heading = {
-    color: "#C9A962",
+    color: "#800020", // Burgundy
     fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: "36px",
+    fontSize: "40px",
     fontWeight: "600",
     lineHeight: "1.2",
-    margin: "0 0 8px",
+    margin: "0 0 12px",
     textAlign: "center" as const,
 };
 
 const subHeading = {
-    color: "#C9A962",
-    fontSize: "16px",
+    color: "#A8A8A8", // Silver dark
+    fontSize: "18px",
     fontStyle: "italic" as const,
-    margin: "0 0 32px",
-    opacity: 0.8,
+    margin: "0 0 40px",
     textAlign: "center" as const,
 };
 
 const greeting = {
-    color: "#FFFFFF",
-    fontSize: "20px",
-    margin: "0 0 24px",
+    color: "#2B2B2B", // Charcoal
+    fontSize: "22px",
+    margin: "0 0 32px",
     textAlign: "center" as const,
 };
 
 const statusCard = {
-    backgroundColor: "#111111",
-    border: "1px solid #C9A962",
-    borderRadius: "4px",
-    margin: "0 0 32px",
-    padding: "32px 24px",
+    backgroundColor: "#F8F8F8", // Off-white
+    border: "2px solid #C0C0C0", // Silver
+    borderRadius: "12px",
+    margin: "0 0 40px",
+    padding: "40px 32px",
     textAlign: "center" as const,
 };
 
 const statusIcon = {
-    fontSize: "40px",
-    margin: "0 0 12px",
+    fontSize: "48px",
+    margin: "0 0 16px",
 };
 
 const statusText = {
-    color: "#C9A962",
-    fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: "24px",
     fontWeight: "600",
     margin: "0 0 8px",
 };

@@ -1,68 +1,33 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
 import { sendEmail } from "@/lib/nodemailer";
 import { render } from "@react-email/components";
 import RSVPEmail from "@/components/emails/RSVPEmail";
+import { mockGuests, Guest } from "@/lib/mockData";
+
+// In-memory storage for RSVPs (will reset on server restart)
+const mockRSVPStorage = new Map<string, {
+    name: string;
+    email: string;
+    attending: boolean;
+    guestCount: number;
+    message?: string;
+    submittedAt: string;
+}>();
+
+// ============================================
+// TYPES
+// ============================================
+
+interface GuestSearchResult {
+    success: boolean;
+    guest?: Guest;
+    error?: string;
+}
 
 interface SubmitRSVPResult {
     success: boolean;
     message: string;
-}
-
-interface InvitationData {
-    success: boolean;
-    familyName: string | null;
-    maxGuests: number;
-    status: string | null;
-    error?: string;
-}
-
-export async function getInvitationData(inviteId: string): Promise<InvitationData> {
-    try {
-        if (!inviteId || !inviteId.trim()) {
-            return {
-                success: false,
-                familyName: null,
-                maxGuests: 2,
-                status: null,
-                error: "Invalid invitation ID.",
-            };
-        }
-
-        const { data, error } = await supabase
-            .from("invitations")
-            .select("family_name, max_guests, status")
-            .eq("id", inviteId.trim())
-            .single();
-
-        if (error || !data) {
-            console.error("Supabase Error fetching invitation:", error);
-            return {
-                success: false,
-                familyName: null,
-                maxGuests: 2,
-                status: null,
-                error: "Invitation not found.",
-            };
-        }
-
-        return {
-            success: true,
-            familyName: data.family_name || null,
-            maxGuests: data.max_guests || 2,
-            status: data.status,
-        };
-    } catch (error) {
-        console.error("Get Invitation Data Error:", error);
-        return {
-            success: false,
-            familyName: null,
-            maxGuests: 2,
-            status: null,
-            error: "An unexpected error occurred.",
-        };
-    }
 }
 
 interface GuestStatusData {
@@ -76,167 +41,98 @@ interface GuestStatusData {
     error?: string;
 }
 
-export async function checkGuestStatus(query: string): Promise<GuestStatusData> {
+// ============================================
+// ACTIONS
+// ============================================
+
+export async function searchGuest(query: string): Promise<GuestSearchResult> {
     try {
         if (!query || !query.trim()) {
             return {
                 success: false,
-                error: "Please enter your email or full name.",
+                error: "Please enter your name.",
             };
         }
 
         const searchTerm = query.trim().toLowerCase();
 
-        // Search by exact email or case-insensitive name
-        // Using ilike for name and eq for email to be precise on email but flexible on name
-        // Note: OR logic in Supabase requires distinct filters usually, but we can try .or()
-        const { data, error } = await supabase
-            .from("guests")
-            .select("name, email, attending, guest_count")
-            .or(`email.eq.${searchTerm},name.ilike.%${searchTerm}%`)
-            .limit(1)
-            .single();
+        // 1. Search in mockGuests
+        const guest = mockGuests.find(g => g.name.toLowerCase().includes(searchTerm));
 
-        if (error || !data) {
-            // It's not necessarily an error if not found, just no result
+        if (!guest) {
             return {
                 success: false,
-                error: "No RSVP found. Please try the email you used or submit a new response.",
+                error: "Guest not found on the list. Please match the name on your invitation.",
+            };
+        }
+
+        // 2. Check if already RSVPed (by checking if any RSVP has this name - simplified)
+        // In a real app, we'd link by ID, but for mock we'll search values
+        const hasRSVPed = Array.from(mockRSVPStorage.values()).some(
+            rsvp => rsvp.name.toLowerCase() === guest.name.toLowerCase()
+        );
+
+        if (hasRSVPed) {
+            return {
+                success: false,
+                error: "You have already submitted an RSVP. Please check your status instead.",
             };
         }
 
         return {
             success: true,
-            data: {
-                name: data.name,
-                email: data.email,
-                attending: data.attending,
-                guestCount: data.guest_count,
-            },
+            guest,
         };
 
     } catch (error) {
-        console.error("Check Guest Status Error:", error);
+        console.error("Search Guest Error:", error);
         return {
             success: false,
-            error: "An unexpected error occurred while checking status.",
+            error: "An unexpected error occurred during search.",
         };
     }
 }
 
 export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> {
     try {
-        // Step A: Extract form data
         const fullName = formData.get("fullName") as string;
         const email = formData.get("email") as string;
         const guestCount = parseInt(formData.get("guestCount") as string) || 1;
         const attending = formData.get("attending") === "yes";
         const message = formData.get("message") as string;
-        const invitationId = formData.get("invitationId") as string | null;
 
-        // Validate required fields
-        if (!fullName || !fullName.trim()) {
-            return { success: false, message: "Please provide your full name." };
-        }
-        if (!email || !email.trim()) {
-            return { success: false, message: "Please provide your email address." };
+        if (!fullName || !email) {
+            return { success: false, message: "Missing required fields." };
         }
 
         const cleanEmail = email.trim().toLowerCase();
+        const cleanName = fullName.trim();
 
-        // Check for existing RSVP with this email
-        const { data: existingGuest, error: checkError } = await supabase
-            .from("guests")
-            .select("id")
-            .eq("email", cleanEmail)
-            .single();
-
-        if (existingGuest) {
+        // Check for duplicate email in storage
+        if (mockRSVPStorage.has(cleanEmail)) {
             return {
                 success: false,
-                message: "An RSVP with this email has already been submitted. Please check your status instead.",
+                message: "An RSVP with this email has already been submitted.",
             };
         }
 
-        // Parse additional guests
-        const additionalGuestsRaw = formData.get("additionalGuests");
-        let additionalGuests: string[] = [];
-        if (additionalGuestsRaw) {
-            try {
-                additionalGuests = JSON.parse(additionalGuestsRaw as string);
-            } catch (e) {
-                console.error("Failed to parse additional guests", e);
-            }
-        }
-
-        // Step B: Insert into Supabase
-        const guestData: Record<string, unknown> = {
-            name: fullName.trim(),
+        // Save to Mock Storage
+        mockRSVPStorage.set(cleanEmail, {
+            name: cleanName,
             email: cleanEmail,
-            guest_count: guestCount,
             attending,
-            message: message?.trim() || null,
-            additional_guests: additionalGuests,
-        };
+            guestCount,
+            message: message?.trim() || undefined,
+            submittedAt: new Date().toISOString(),
+        });
 
-        // Step B.1: If invitation ID exists, verify it hasn't been used (server-side check)
-        if (invitationId && invitationId.trim()) {
-            const { data: invitationData, error: inviteCheckError } = await supabase
-                .from("invitations")
-                .select("status")
-                .eq("id", invitationId.trim())
-                .single();
+        console.log("New RSVP Received:", { cleanName, cleanEmail, attending, guestCount });
 
-            if (inviteCheckError || !invitationData) {
-                console.error("Failed to verify invitation:", inviteCheckError);
-                return {
-                    success: false,
-                    message: "Invalid invitation. Please contact the couple.",
-                };
-            }
-
-            if (invitationData.status === "responded") {
-                return {
-                    success: false,
-                    message: "This invitation has already been used. Please contact the couple if you need to change your response.",
-                };
-            }
-
-            guestData.invitation_id = invitationId.trim();
-        }
-
-        const { error: dbError } = await supabase.from("guests").insert(guestData);
-
-        if (dbError) {
-            console.error("Supabase Error:", dbError);
-            return {
-                success: false,
-                message: "Failed to save your RSVP. Please try again.",
-            };
-        }
-
-        // Step B.2: Lock the invitation if successful
-        if (invitationId && invitationId.trim()) {
-            console.log("Attempting to lock invitation:", invitationId.trim());
-            const { data: updateData, error: updateError } = await supabase
-                .from("invitations")
-                .update({ status: "responded" })
-                .eq("id", invitationId.trim())
-                .select();
-
-            if (updateError) {
-                console.error("Failed to update invitation status:", updateError);
-                // We don't fail the request here as the RSVP is already saved
-            } else {
-                console.log("Invitation status update result:", updateData);
-            }
-        }
-
-        // Step C: Send confirmation email
+        // Send Email
         try {
             const emailHtml = await render(
                 RSVPEmail({
-                    fullName: fullName.trim(),
+                    fullName: cleanName,
                     attending,
                     guestCount,
                 })
@@ -245,21 +141,22 @@ export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> 
             await sendEmail({
                 to: cleanEmail,
                 subject: attending
-                    ? "🎉 Your RSVP is Confirmed! | Wedding Celebration"
-                    : "Thank You for Your Response | Wedding Celebration",
+                    ? "🎉 Your RSVP is Confirmed! | Daniel & Giada"
+                    : "Thank You for Your Response | Daniel & Giada",
                 html: emailHtml,
             });
         } catch (emailError) {
-            console.error("Email Error:", emailError);
+            console.error("Email sending failed (Mock Mode):", emailError);
+            // Don't fail the request if email fails in dev
         }
 
-        // Step D: Return success
         return {
             success: true,
             message: attending
                 ? "Thank you! Your attendance has been confirmed."
                 : "Thank you for letting us know. We'll miss you!",
         };
+
     } catch (error) {
         console.error("Submit RSVP Error:", error);
         return {
@@ -269,72 +166,40 @@ export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> 
     }
 }
 
-// ============================================
-// MESSAGE BOARD ACTIONS
-// ============================================
-
-interface SubmitMessageResult {
-    success: boolean;
-    message: string;
-}
-
-export async function submitMessage(formData: FormData): Promise<SubmitMessageResult> {
+export async function checkRSVPStatus(email: string): Promise<GuestStatusData> {
     try {
-        const name = formData.get("name") as string;
-        const messageText = formData.get("message") as string;
-
-        if (!name || !name.trim()) {
-            return { success: false, message: "Please provide your name." };
-        }
-        if (!messageText || !messageText.trim()) {
-            return { success: false, message: "Please write a message." };
+        if (!email || !email.trim()) {
+            return {
+                success: false,
+                error: "Please enter your email.",
+            };
         }
 
-        const { error } = await supabase.from("messages").insert({
-            name: name.trim(),
-            message: messageText.trim(),
-        });
+        const cleanEmail = email.trim().toLowerCase();
+        const rsvp = mockRSVPStorage.get(cleanEmail);
 
-        if (error) {
-            console.error("Supabase Error submitting message:", error);
-            return { success: false, message: "Failed to save your message. Please try again." };
+        if (!rsvp) {
+            return {
+                success: false,
+                error: "No RSVP found for this email.",
+            };
         }
 
-        return { success: true, message: "Your message has been posted!" };
+        return {
+            success: true,
+            data: {
+                name: rsvp.name,
+                email: rsvp.email,
+                attending: rsvp.attending,
+                guestCount: rsvp.guestCount,
+            },
+        };
+
     } catch (error) {
-        console.error("Submit Message Error:", error);
-        return { success: false, message: "An unexpected error occurred." };
-    }
-}
-
-interface Message {
-    id: string;
-    name: string;
-    message: string;
-    created_at: string;
-}
-
-interface GetMessagesResult {
-    success: boolean;
-    messages: Message[];
-    error?: string;
-}
-
-export async function getMessages(): Promise<GetMessagesResult> {
-    try {
-        const { data, error } = await supabase
-            .from("messages")
-            .select("id, name, message, created_at")
-            .order("created_at", { ascending: false });
-
-        if (error) {
-            console.error("Supabase Error fetching messages:", error);
-            return { success: false, messages: [], error: "Failed to load messages." };
-        }
-
-        return { success: true, messages: data || [] };
-    } catch (error) {
-        console.error("Get Messages Error:", error);
-        return { success: false, messages: [], error: "An unexpected error occurred." };
+        console.error("Check Status Error:", error);
+        return {
+            success: false,
+            error: "An unexpected error occurred.",
+        };
     }
 }

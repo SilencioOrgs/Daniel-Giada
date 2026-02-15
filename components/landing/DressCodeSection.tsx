@@ -1,10 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SilverCard } from "@/components/ui/SilverCard";
 import { DRESS_CODE } from "@/lib/mockData";
+import { X, Image as ImageIcon } from "lucide-react";
 
 export function DressCodeSection() {
+    const [showGuide, setShowGuide] = useState(false);
+
     const palette = [
         "#E8E8E8", // Light gray
         "#D3D3D3", // Silver light
@@ -39,11 +43,23 @@ export function DressCodeSection() {
                         Dress Code
                     </h2>
                     {/* Geometric Divider */}
-                    <div className="flex items-center justify-center gap-4 mb-6">
+                    <div className="flex items-center justify-center gap-4 mb-8">
                         <div className="h-px w-16 bg-silver" />
                         <div className="w-2 h-2 bg-silver rotate-45 transform" />
                         <div className="h-px w-16 bg-silver" />
                     </div>
+
+                    {/* View Guide Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setShowGuide(true)}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-burgundy text-white text-xs tracking-[0.2em] uppercase rounded-full hover:bg-burgundy-dark transition-colors shadow-lg"
+                        style={{ fontFamily: "var(--font-body)" }}
+                    >
+                        <ImageIcon size={16} />
+                        View Visual Guide
+                    </motion.button>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
@@ -142,6 +158,42 @@ export function DressCodeSection() {
                     {DRESS_CODE.note}
                 </motion.p>
             </div>
+
+            {/* Visual Guide Modal */}
+            <AnimatePresence>
+                {showGuide && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+                        onClick={() => setShowGuide(false)}
+                    >
+                        <button
+                            onClick={() => setShowGuide(false)}
+                            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2"
+                        >
+                            <X size={32} />
+                        </button>
+
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-4xl max-h-[90vh] w-full bg-white rounded-lg overflow-hidden shadow-2xl"
+                            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        >
+                            <div className="overflow-auto max-h-[85vh] p-2">
+                                <img
+                                    src="/dresscode.png"
+                                    alt="Wedding Dress Code Guide"
+                                    className="w-full h-auto object-contain"
+                                />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }
