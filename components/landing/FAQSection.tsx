@@ -74,7 +74,7 @@ export function FAQSection() {
         },
         {
             question: "When should I RSVP?",
-            answer: "We respectfully request that all responses be submitted on or before May 20, 2026 - 7:00pm."
+            answer: "We respectfully request that all responses be submitted on or before April 15, 2026."
         },
         {
             question: "May I bring a plus one?",

@@ -279,7 +279,7 @@ export function RSVPSection() {
                             <div className="h-px w-16 bg-silver" />
                         </div>
                         <p className="text-charcoal text-lg mb-4">
-                            Please confirm your attendance by May 20, 2026
+                            Please confirm your attendance on or before April 15, 2026
                         </p>
                     </div>
 

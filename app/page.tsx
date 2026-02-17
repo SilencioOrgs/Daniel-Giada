@@ -8,6 +8,7 @@ import { DressCodeSection } from "@/components/landing/DressCodeSection";
 import { StorySection } from "@/components/landing/StorySection";
 import { EntourageSection } from "@/components/landing/EntourageSection";
 import { FAQSection } from "@/components/landing/FAQSection";
+import { GiftGuideSection } from "@/components/landing/GiftGuideSection";
 import { RSVPSection } from "@/components/landing/RSVPSection";
 import { Footer } from "@/components/landing/Footer";
 import { SectionDots } from "@/components/ui/SectionDots";
@@ -51,6 +52,7 @@ export default function Home() {
       <StorySection />
       <EntourageSection />
       <FAQSection />
+      <GiftGuideSection />
       <Suspense fallback={<RSVPFallback />}>
         <RSVPSection />
       </Suspense>
