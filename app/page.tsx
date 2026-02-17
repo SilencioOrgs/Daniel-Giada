@@ -7,7 +7,6 @@ import { VenueSection } from "@/components/landing/VenueSection";
 import { DressCodeSection } from "@/components/landing/DressCodeSection";
 import { StorySection } from "@/components/landing/StorySection";
 import { EntourageSection } from "@/components/landing/EntourageSection";
-import { GallerySection } from "@/components/landing/GallerySection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { RSVPSection } from "@/components/landing/RSVPSection";
 import { Footer } from "@/components/landing/Footer";
@@ -51,7 +50,6 @@ export default function Home() {
       <DressCodeSection />
       <StorySection />
       <EntourageSection />
-      <GallerySection />
       <FAQSection />
       <Suspense fallback={<RSVPFallback />}>
         <RSVPSection />

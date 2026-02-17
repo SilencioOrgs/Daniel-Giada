@@ -215,40 +215,47 @@ export function EntourageSection() {
                         transition={{ duration: 0.6 }}
                         className="max-w-4xl mx-auto"
                     >
-                        <h3 className="text-burgundy text-2xl mb-8 text-center font-display">Bearers & Flower Girls</h3>
-                        <SilverCard>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Bearers</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center border-b border-silver/20 pb-2">
-                                            <span className="text-silver-dark text-xs uppercase tracking-wider">Ring</span>
-                                            <span className="text-charcoal font-medium">{ENTOURAGE.bearers.ring}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-silver/20 pb-2">
-                                            <span className="text-silver-dark text-xs uppercase tracking-wider">Bible</span>
-                                            <span className="text-charcoal font-medium">{ENTOURAGE.bearers.bible}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-silver/20 pb-2">
-                                            <span className="text-silver-dark text-xs uppercase tracking-wider">Coin</span>
-                                            <span className="text-charcoal font-medium">{ENTOURAGE.bearers.coin}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                        <h3 className="text-burgundy text-2xl mb-8 text-center font-display">Bearers & Flower Children</h3>
 
-                                <div>
-                                    <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Girls & Ladies</h4>
-                                    <div className="space-y-2 text-center">
-                                        {ENTOURAGE.flowerLadies.map((lady, i) => (
-                                            <p key={`lady-${i}`} className="text-charcoal">{lady}</p>
-                                        ))}
-                                        {ENTOURAGE.flowerGirls.map((girl, i) => (
-                                            <p key={`girl-${i}`} className="text-charcoal">{girl}</p>
-                                        ))}
-                                    </div>
+                        {/* Bearers - Full Width on Top */}
+                        <SilverCard className="mb-6">
+                            <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-6 text-center">Bearers</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-silver/20 pb-4 md:pb-0 md:pr-6">
+                                    <span className="text-silver-dark text-xs uppercase tracking-wider mb-2">Ring</span>
+                                    <span className="text-charcoal font-medium text-center">{ENTOURAGE.bearers.ring}</span>
+                                </div>
+                                <div className="flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-silver/20 pb-4 md:pb-0 md:pr-6">
+                                    <span className="text-silver-dark text-xs uppercase tracking-wider mb-2">Bible</span>
+                                    <span className="text-charcoal font-medium text-center">{ENTOURAGE.bearers.bible}</span>
+                                </div>
+                                <div className="flex flex-col items-center justify-center">
+                                    <span className="text-silver-dark text-xs uppercase tracking-wider mb-2">Coin</span>
+                                    <span className="text-charcoal font-medium text-center">{ENTOURAGE.bearers.coin}</span>
                                 </div>
                             </div>
                         </SilverCard>
+
+                        {/* Flower Girls and Ladies - Side by Side Below */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <SilverCard className="h-full">
+                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Girls (4)</h4>
+                                <div className="space-y-2 text-center">
+                                    {ENTOURAGE.flowerGirls.map((girl, i) => (
+                                        <p key={`girl-${i}`} className="text-charcoal">{girl}</p>
+                                    ))}
+                                </div>
+                            </SilverCard>
+
+                            <SilverCard className="h-full">
+                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Ladies (3)</h4>
+                                <div className="space-y-2 text-center">
+                                    {ENTOURAGE.flowerLadies.map((lady, i) => (
+                                        <p key={`lady-${i}`} className="text-charcoal">{lady}</p>
+                                    ))}
+                                </div>
+                            </SilverCard>
+                        </div>
                     </motion.div>
                 </div>
             </div>
