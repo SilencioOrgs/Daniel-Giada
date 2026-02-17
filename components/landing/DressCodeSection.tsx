@@ -185,7 +185,7 @@ export function DressCodeSection() {
                         >
                             <div className="overflow-auto max-h-[85vh] p-2">
                                 <img
-                                    src="/dresscode.png"
+                                    src="/outfit.png"
                                     alt="Wedding Dress Code Guide"
                                     className="w-full h-auto object-contain"
                                 />
