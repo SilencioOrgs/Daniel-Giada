@@ -79,7 +79,7 @@ export function MusicPlayer() {
             {/* Hidden Audio Element */}
             <audio
                 ref={audioRef}
-                src="/wedding_vid.mp4"
+                src="/bgm_03.mp3"
                 loop
                 preload="auto"
             />
