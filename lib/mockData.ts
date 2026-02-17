@@ -118,86 +118,8 @@ export const ENTOURAGE = {
     }
 };
 
-export type Guest = {
-    id: number;
-    name: string;
-    status: "pending" | "confirmed" | "declined";
-    maxGuests: number;
-    role: string;
-};
 
-export const mockGuests: Guest[] = [
-    {
-        id: 1,
-        name: "John Marie F. Nepomuceno",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Lady"
-    },
-    {
-        id: 2,
-        name: "Christianne F. Nepomuceno",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Lady"
-    },
-    {
-        id: 3,
-        name: "Phoebe Adia Reese Q. Flores",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Lady"
-    },
-    {
-        id: 4,
-        name: "Angel Yesha F. Dulin",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Girl"
-    },
-    {
-        id: 5,
-        name: "Angela Yassi F. Dulin",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Girl"
-    },
-    {
-        id: 6,
-        name: "Mckyla Jazen H. Quinto",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Girl"
-    },
-    {
-        id: 7,
-        name: "Zariyah Callie S. Cuevas",
-        status: "pending",
-        maxGuests: 1,
-        role: "Flower Girl"
-    },
-    {
-        id: 8,
-        name: "Mckale Jace H. Quinto",
-        status: "pending",
-        maxGuests: 1,
-        role: "Coin Bearer"
-    },
-    {
-        id: 9,
-        name: "Paul Ryker C. Flores",
-        status: "pending",
-        maxGuests: 1,
-        role: "Bible Bearer"
-    },
-    {
-        id: 10,
-        name: "Angelo Yohan F. Dulin",
-        status: "pending",
-        maxGuests: 1,
-        role: "Ring Bearer"
-    },
-];
+
 
 export const mockStories = [
     {

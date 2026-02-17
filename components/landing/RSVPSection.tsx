@@ -1,19 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Send, Loader2, CheckCircle, X, Heart, AlertCircle } from "lucide-react";
-import { searchGuest, submitRSVP, checkRSVPStatus } from "@/app/actions";
+import { Search, Send, Loader2, CheckCircle, X, Heart, AlertCircle, ChevronDown, User, MessageCircle } from "lucide-react";
+import { searchGuests, submitRSVP, checkRSVPStatus } from "@/app/actions";
 import { SilverCard } from "@/components/ui/SilverCard";
 import { ConfirmationModal } from "./ConfirmationModal";
-import { Guest } from "@/lib/mockData";
+
+type Guest = { id: string; name: string; maxGuests: number; role: string; rsvpSubmitted: boolean };
 
 export function RSVPSection() {
     // Search state
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearching, setIsSearching] = useState(false);
-    const [searchError, setSearchError] = useState<string | null>(null);
+    const [searchResults, setSearchResults] = useState<Guest[]>([]);
+    const [showDropdown, setShowDropdown] = useState(false);
     const [foundGuest, setFoundGuest] = useState<Guest | null>(null);
+    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -21,7 +25,6 @@ export function RSVPSection() {
         email: "",
         guests: "1",
         attending: "",
-        message: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -29,7 +32,7 @@ export function RSVPSection() {
     // Modal state
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
-    const [lastSubmittedData, setLastSubmittedData] = useState<typeof formData | null>(null);
+    const [lastSubmittedData, setLastSubmittedData] = useState<any>(null);
 
     // Status check state
     const [showStatusModal, setShowStatusModal] = useState(false);
@@ -38,30 +41,57 @@ export function RSVPSection() {
     const [statusResult, setStatusResult] = useState<any>(null);
     const [statusError, setStatusError] = useState<string | null>(null);
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSearching(true);
-        setSearchError(null);
-        setFoundGuest(null);
-
-        try {
-            const result = await searchGuest(searchQuery);
-
-            if (result.success && result.guest) {
-                setFoundGuest(result.guest);
-                setFormData(prev => ({
-                    ...prev,
-                    name: result.guest!.name,
-                    guests: "1", // Default to 1, will be limited by maxGuests
-                }));
-            } else {
-                setSearchError(result.error || "Guest not found.");
+    // Handle outside click to close dropdown
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowDropdown(false);
             }
-        } catch (error) {
-            setSearchError("An error occurred. Please try again.");
-        } finally {
-            setIsSearching(false);
         }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Realtime search effect
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
+        }
+
+        // Debounce search
+        if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
+        setIsSearching(true);
+        searchTimeoutRef.current = setTimeout(async () => {
+            try {
+                const result = await searchGuests(searchQuery);
+                if (result.success && result.guests) {
+                    setSearchResults(result.guests);
+                    setShowDropdown(true);
+                }
+            } catch (error) {
+                console.error("Search failed", error);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 300);
+
+        return () => {
+            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+        };
+    }, [searchQuery]);
+
+    const handleSelectGuest = (guest: Guest) => {
+        setFoundGuest(guest);
+        setFormData(prev => ({
+            ...prev,
+            name: guest.name,
+            guests: "1",
+        }));
+        setSearchQuery("");
+        setShowDropdown(false);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -75,12 +105,10 @@ export function RSVPSection() {
             data.append("email", formData.email);
             data.append("guestCount", formData.guests);
             data.append("attending", formData.attending);
-            data.append("message", formData.message);
 
             const result = await submitRSVP(data);
 
             if (result.success) {
-                // Save data for modal before resetting form
                 setLastSubmittedData({ ...formData });
 
                 if (formData.attending === "yes") {
@@ -88,7 +116,6 @@ export function RSVPSection() {
                     setTimeout(() => setShowConfetti(false), 4000);
                 }
                 setShowConfirmModal(true);
-                // Reset form
                 setFoundGuest(null);
                 setSearchQuery("");
                 setFormData({
@@ -96,7 +123,6 @@ export function RSVPSection() {
                     email: "",
                     guests: "1",
                     attending: "",
-                    message: "",
                 });
             } else {
                 setSubmitError(result.message);
@@ -283,80 +309,106 @@ export function RSVPSection() {
                         </p>
                     </div>
 
-                    {/* Search Box */}
+                    {/* Search Box — burgundy card */}
                     {!foundGuest && (
-                        <SilverCard className="mb-8">
-                            <form onSubmit={handleSearch} className="space-y-4">
-                                <div>
-                                    <label className="block text-burgundy text-sm font-medium mb-3 text-center">
+                        <SilverCard className="mb-8 overflow-visible z-20 !bg-burgundy border-burgundy-light shadow-2xl">
+                            <div className="space-y-4" ref={dropdownRef}>
+                                <div className="text-center space-y-2">
+                                    <label className="block text-white text-sm font-medium">
                                         Search for your name to RSVP
                                     </label>
-                                    <div className="relative">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-silver-dark/50" size={20} />
-                                        <input
-                                            type="text"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            placeholder="Enter your full name..."
-                                            className="w-full bg-white border-2 border-silver/40 rounded-lg py-4 pl-12 pr-4 text-charcoal focus:border-burgundy focus:outline-none transition-colors text-lg"
-                                            required
-                                        />
-                                    </div>
+                                    <p className="text-xs text-rose-200 italic">
+                                        Warning: Only searchable names are invited. Please do not try to RSVP if your name is not on the list.
+                                    </p>
                                 </div>
 
-                                {searchError && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200"
-                                    >
-                                        <AlertCircle size={16} />
-                                        {searchError}
-                                    </motion.div>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    disabled={isSearching}
-                                    className="w-full bg-burgundy text-white py-4 rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-burgundy-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
-                                >
-                                    {isSearching ? (
-                                        <>
-                                            <Loader2 className="animate-spin" size={18} />
-                                            Searching...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Search size={18} />
-                                            Find My Name
-                                        </>
+                                <div className="relative">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" size={20} />
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Start typing your name..."
+                                        className="w-full bg-white/10 border-2 border-silver/20 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none transition-colors text-lg"
+                                        autoComplete="off"
+                                    />
+                                    {isSearching && (
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                            <Loader2 className="animate-spin text-white" size={20} />
+                                        </div>
                                     )}
-                                </button>
-                            </form>
+
+                                    {/* Dropdown Results */}
+                                    <AnimatePresence>
+                                        {showDropdown && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 10 }}
+                                                className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-silver/20 max-h-60 overflow-y-auto z-50 py-2"
+                                            >
+                                                {searchResults.length > 0 ? (
+                                                    searchResults.map((guest) => (
+                                                        <button
+                                                            key={guest.id}
+                                                            onClick={() => handleSelectGuest(guest)}
+                                                            className="w-full px-4 py-3 text-left hover:bg-burgundy/5 flex items-center justify-between transition-colors group"
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <User size={16} className="text-silver-dark group-hover:text-burgundy" />
+                                                                <div>
+                                                                    <span className="block font-medium text-charcoal group-hover:text-burgundy">
+                                                                        {guest.name}
+                                                                    </span>
+                                                                    {guest.rsvpSubmitted && (
+                                                                        <span className="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                                                                            RSVP Submitted
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-xs text-silver-dark">
+                                                                {guest.maxGuests} seat{guest.maxGuests > 1 ? "s" : ""}
+                                                            </div>
+                                                        </button>
+                                                    ))
+                                                ) : (
+                                                    <div className="px-4 py-3 text-center text-silver-dark text-sm">
+                                                        <p>Name not found?</p>
+                                                        <a href="#" className="text-burgundy font-medium hover:underline block mt-1">
+                                                            Contact the Couple
+                                                        </a>
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
                         </SilverCard>
                     )}
 
-                    {/* Guest Found - RSVP Form */}
+                    {/* Guest Found — burgundy RSVP Form */}
                     {foundGuest && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.4 }}
                         >
-                            <SilverCard className="mb-6">
+                            <SilverCard className="mb-6 !bg-burgundy border-burgundy-light shadow-2xl">
                                 <div className="flex items-start justify-between mb-6">
                                     <div>
                                         <div className="flex items-center gap-2 mb-2">
-                                            <CheckCircle className="text-green-600" size={24} />
-                                            <h3 className="text-burgundy text-2xl font-display">
+                                            <CheckCircle className="text-emerald-400" size={24} />
+                                            <h3 className="text-white text-2xl font-display">
                                                 Welcome, {foundGuest.name.split(" ")[0]}!
                                             </h3>
                                         </div>
-                                        <p className="text-silver-dark text-sm">
+                                        <p className="text-silver/80 text-sm">
                                             Role: {foundGuest.role}
                                         </p>
-                                        <p className="text-charcoal text-sm mt-1">
-                                            Seats allocated: <span className="font-bold text-burgundy">{foundGuest.maxGuests}</span>
+                                        <p className="text-silver/80 text-sm mt-1">
+                                            Seats allocated: <span className="font-bold text-white">{foundGuest.maxGuests}</span>
                                         </p>
                                     </div>
                                     <button
@@ -368,10 +420,9 @@ export function RSVPSection() {
                                                 email: "",
                                                 guests: "1",
                                                 attending: "",
-                                                message: "",
                                             });
                                         }}
-                                        className="text-silver-dark hover:text-burgundy transition-colors"
+                                        className="text-silver/60 hover:text-white transition-colors"
                                     >
                                         <X size={20} />
                                     </button>
@@ -380,28 +431,28 @@ export function RSVPSection() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {/* Email */}
                                     <div>
-                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-ornate)" }}>
-                                            Email Address <span className="text-burgundy">*</span>
+                                        <label className="block text-silver/80 text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-body)" }}>
+                                            Email Address <span className="text-white">*</span>
                                         </label>
                                         <input
                                             type="email"
                                             required
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full bg-white border-2 border-silver/40 rounded-lg py-3 px-4 text-charcoal focus:border-burgundy focus:outline-none transition-colors"
+                                            className="w-full bg-white/10 border-2 border-silver/20 rounded-lg py-3 px-4 text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none transition-colors"
                                             placeholder="your.email@example.com"
                                         />
                                     </div>
 
                                     {/* Number of Guests */}
                                     <div>
-                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-ornate)" }}>
+                                        <label className="block text-silver/80 text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-body)" }}>
                                             Number of Guests
                                         </label>
                                         <select
                                             value={formData.guests}
                                             onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                                            className="w-full bg-white border-2 border-silver/40 rounded-lg py-3 px-4 text-charcoal focus:border-burgundy focus:outline-none transition-colors cursor-pointer"
+                                            className="w-full bg-white/10 border-2 border-silver/20 rounded-lg py-3 px-4 text-white focus:border-white/60 focus:outline-none transition-colors cursor-pointer [&>option]:text-charcoal"
                                         >
                                             {guestOptions.map((num) => (
                                                 <option key={num} value={num.toString()}>
@@ -413,14 +464,14 @@ export function RSVPSection() {
 
                                     {/* Attendance */}
                                     <div>
-                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "var(--font-ornate)" }}>
-                                            Will You Attend? <span className="text-burgundy">*</span>
+                                        <label className="block text-silver/80 text-xs tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "var(--font-body)" }}>
+                                            Will You Attend? <span className="text-white">*</span>
                                         </label>
                                         <div className="grid grid-cols-2 gap-4">
                                             <label
                                                 className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${formData.attending === "yes"
-                                                    ? "border-burgundy bg-burgundy/10"
-                                                    : "border-silver/30 hover:border-burgundy/60"
+                                                    ? "border-emerald-400 bg-emerald-400/20"
+                                                    : "border-silver/20 hover:border-silver/50"
                                                     }`}
                                             >
                                                 <input
@@ -433,19 +484,19 @@ export function RSVPSection() {
                                                     required
                                                 />
                                                 <Heart
-                                                    className={formData.attending === "yes" ? "text-burgundy" : "text-silver-dark/50"}
+                                                    className={formData.attending === "yes" ? "text-emerald-400" : "text-silver/40"}
                                                     size={20}
                                                     fill={formData.attending === "yes" ? "currentColor" : "none"}
                                                 />
-                                                <span className={`text-sm font-semibold ${formData.attending === "yes" ? "text-burgundy" : "text-charcoal"}`}>
-                                                    Yes, I'll attend
+                                                <span className={`text-sm font-semibold ${formData.attending === "yes" ? "text-emerald-100" : "text-silver"}`}>
+                                                    Yes, I&apos;ll attend
                                                 </span>
                                             </label>
 
                                             <label
                                                 className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${formData.attending === "no"
-                                                    ? "border-charcoal/60 bg-charcoal/5"
-                                                    : "border-silver/30 hover:border-charcoal/60"
+                                                    ? "border-rose-300 bg-rose-400/20"
+                                                    : "border-silver/20 hover:border-silver/50"
                                                     }`}
                                             >
                                                 <input
@@ -456,26 +507,12 @@ export function RSVPSection() {
                                                     onChange={(e) => setFormData({ ...formData, attending: e.target.value })}
                                                     className="sr-only"
                                                 />
-                                                <X className={formData.attending === "no" ? "text-charcoal" : "text-silver-dark/50"} size={20} />
-                                                <span className={`text-sm font-semibold ${formData.attending === "no" ? "text-charcoal" : "text-charcoal"}`}>
-                                                    Can't make it
+                                                <X className={formData.attending === "no" ? "text-rose-300" : "text-silver/40"} size={20} />
+                                                <span className={`text-sm font-semibold ${formData.attending === "no" ? "text-rose-100" : "text-silver"}`}>
+                                                    Can&apos;t make it
                                                 </span>
                                             </label>
                                         </div>
-                                    </div>
-
-                                    {/* Message */}
-                                    <div>
-                                        <label className="block text-silver-dark text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-ornate)" }}>
-                                            Message (Optional)
-                                        </label>
-                                        <textarea
-                                            value={formData.message}
-                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            rows={3}
-                                            className="w-full bg-white border-2 border-silver/40 rounded-lg py-3 px-4 text-charcoal focus:border-burgundy focus:outline-none transition-colors resize-none"
-                                            placeholder="Share your wishes with the couple..."
-                                        />
                                     </div>
 
                                     {/* Error */}
@@ -483,9 +520,9 @@ export function RSVPSection() {
                                         <motion.div
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="bg-red-50 border border-red-200 rounded-lg p-3"
+                                            className="bg-red-500/20 border border-red-400/50 rounded-lg p-3"
                                         >
-                                            <p className="text-red-600 text-sm text-center">{submitError}</p>
+                                            <p className="text-red-200 text-sm text-center">{submitError}</p>
                                         </motion.div>
                                     )}
 
@@ -493,7 +530,7 @@ export function RSVPSection() {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className={`w-full bg-burgundy text-white py-4 rounded-lg font-bold uppercase tracking-wider text-sm transition-all flex items-center justify-center gap-2 shadow-xl ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-burgundy-dark hover:shadow-2xl"
+                                        className={`w-full bg-white text-burgundy py-4 rounded-lg font-bold uppercase tracking-wider text-sm transition-all flex items-center justify-center gap-2 shadow-xl ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-silver hover:shadow-2xl"
                                             }`}
                                     >
                                         {isSubmitting ? (

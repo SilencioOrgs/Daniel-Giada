@@ -255,3 +255,44 @@ body {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Burgundy Section Background */
+.burgundy-section {
+  background: linear-gradient(165deg,
+      var(--color-burgundy-dark) 0%,
+      var(--color-burgundy) 40%,
+      var(--color-wine) 70%,
+      var(--color-burgundy-dark) 100%);
+  color: var(--color-off-white);
+}
+
+/* Gradient Dividers — elegant transitions between sections */
+.gradient-divider-to-burgundy {
+  height: 120px;
+  background: linear-gradient(to bottom,
+      var(--color-off-white) 0%,
+      rgba(128, 0, 32, 0.05) 30%,
+      rgba(128, 0, 32, 0.15) 60%,
+      var(--color-burgundy-dark) 100%);
+}
+
+.gradient-divider-from-burgundy {
+  height: 120px;
+  background: linear-gradient(to bottom,
+      var(--color-burgundy-dark) 0%,
+      rgba(128, 0, 32, 0.15) 40%,
+      rgba(128, 0, 32, 0.05) 70%,
+      var(--color-off-white) 100%);
+}
+
+/* Subtle burgundy shimmer between light sections */
+.gradient-accent-strip {
+  height: 4px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--color-burgundy-dark) 20%,
+      var(--color-burgundy) 50%,
+      var(--color-burgundy-dark) 80%,
+      transparent 100%);
+  opacity: 0.3;
+}

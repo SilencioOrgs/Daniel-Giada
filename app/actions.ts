@@ -1,27 +1,24 @@
 "use server";
 
+import { supabase } from "@/lib/supabase";
 import { sendEmail } from "@/lib/nodemailer";
 import { render } from "@react-email/components";
 import RSVPEmail from "@/components/emails/RSVPEmail";
-import { mockGuests, Guest } from "@/lib/mockData";
-
-// In-memory storage for RSVPs (will reset on server restart)
-const mockRSVPStorage = new Map<string, {
-    name: string;
-    email: string;
-    attending: boolean;
-    guestCount: number;
-    message?: string;
-    submittedAt: string;
-}>();
 
 // ============================================
 // TYPES
 // ============================================
 
+export interface Guest {
+    id: string;
+    name: string;
+    max_guests: number;
+    status: "pending" | "confirmed" | "declined";
+}
+
 interface GuestSearchResult {
     success: boolean;
-    guest?: Guest;
+    guests?: { id: string; name: string; maxGuests: number; role: string; rsvpSubmitted: boolean }[];
     error?: string;
 }
 
@@ -45,50 +42,49 @@ interface GuestStatusData {
 // ACTIONS
 // ============================================
 
-export async function searchGuest(query: string): Promise<GuestSearchResult> {
+export async function searchGuests(query: string): Promise<GuestSearchResult> {
     try {
         if (!query || !query.trim()) {
             return {
                 success: false,
-                error: "Please enter your name.",
+                guests: [],
             };
         }
 
         const searchTerm = query.trim().toLowerCase();
 
-        // 1. Search in mockGuests
-        const guest = mockGuests.find(g => g.name.toLowerCase().includes(searchTerm));
+        // Search by name (case-insensitive, partial match) -> limit for dropdown
+        const { data: guests, error } = await supabase
+            .from("guests")
+            .select("id, name, max_guests, status, rsvp_submitted_at")
+            .ilike("name", `%${searchTerm}%`)
+            .order("name")
+            .limit(10); // Limit results for dropdown
 
-        if (!guest) {
+        if (error) {
+            console.error("Supabase search error:", error);
             return {
                 success: false,
-                error: "Guest not found on the list. Please match the name on your invitation.",
-            };
-        }
-
-        // 2. Check if already RSVPed (by checking if any RSVP has this name - simplified)
-        // In a real app, we'd link by ID, but for mock we'll search values
-        const hasRSVPed = Array.from(mockRSVPStorage.values()).some(
-            rsvp => rsvp.name.toLowerCase() === guest.name.toLowerCase()
-        );
-
-        if (hasRSVPed) {
-            return {
-                success: false,
-                error: "You have already submitted an RSVP. Please check your status instead.",
+                error: "An error occurred during search.",
             };
         }
 
         return {
             success: true,
-            guest,
+            guests: (guests || []).map(g => ({
+                id: g.id,
+                name: g.name,
+                maxGuests: g.max_guests,
+                role: "Guest",
+                rsvpSubmitted: !!g.rsvp_submitted_at
+            })),
         };
 
     } catch (error) {
         console.error("Search Guest Error:", error);
         return {
             success: false,
-            error: "An unexpected error occurred during search.",
+            error: "An unexpected error occurred.",
         };
     }
 }
@@ -99,7 +95,7 @@ export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> 
         const email = formData.get("email") as string;
         const guestCount = parseInt(formData.get("guestCount") as string) || 1;
         const attending = formData.get("attending") === "yes";
-        const message = formData.get("message") as string;
+        // Message removed per request
 
         if (!fullName || !email) {
             return { success: false, message: "Missing required fields." };
@@ -108,27 +104,53 @@ export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> 
         const cleanEmail = email.trim().toLowerCase();
         const cleanName = fullName.trim();
 
-        // Check for duplicate email in storage
-        if (mockRSVPStorage.has(cleanEmail)) {
+        // Find the guest by name
+        const { data: guests, error: findError } = await supabase
+            .from("guests")
+            .select("id, rsvp_submitted_at")
+            .ilike("name", cleanName)
+            .limit(1);
+
+        if (findError || !guests || guests.length === 0) {
             return {
                 success: false,
-                message: "An RSVP with this email has already been submitted.",
+                message: "Guest not found. Please search for your name first.",
             };
         }
 
-        // Save to Mock Storage
-        mockRSVPStorage.set(cleanEmail, {
-            name: cleanName,
-            email: cleanEmail,
-            attending,
-            guestCount,
-            message: message?.trim() || undefined,
-            submittedAt: new Date().toISOString(),
-        });
+        const guest = guests[0];
+
+        // Check for duplicate RSVP
+        if (guest.rsvp_submitted_at) {
+            return {
+                success: false,
+                message: "An RSVP has already been submitted for this guest.",
+            };
+        }
+
+        // Update guest record with RSVP data (message removed)
+        const { error: updateError } = await supabase
+            .from("guests")
+            .update({
+                email: cleanEmail,
+                attending,
+                guest_count: guestCount,
+                status: attending ? "confirmed" : "declined",
+                rsvp_submitted_at: new Date().toISOString(),
+            })
+            .eq("id", guest.id);
+
+        if (updateError) {
+            console.error("Supabase update error:", updateError);
+            return {
+                success: false,
+                message: "Failed to submit RSVP. Please try again.",
+            };
+        }
 
         console.log("New RSVP Received:", { cleanName, cleanEmail, attending, guestCount });
 
-        // Send Email
+        // Send Confirmation Email
         try {
             const emailHtml = await render(
                 RSVPEmail({
@@ -146,8 +168,8 @@ export async function submitRSVP(formData: FormData): Promise<SubmitRSVPResult> 
                 html: emailHtml,
             });
         } catch (emailError) {
-            console.error("Email sending failed (Mock Mode):", emailError);
-            // Don't fail the request if email fails in dev
+            console.error("Email sending failed:", emailError);
+            // Don't fail the RSVP if email fails
         }
 
         return {
@@ -176,22 +198,30 @@ export async function checkRSVPStatus(email: string): Promise<GuestStatusData> {
         }
 
         const cleanEmail = email.trim().toLowerCase();
-        const rsvp = mockRSVPStorage.get(cleanEmail);
 
-        if (!rsvp) {
+        const { data: guests, error } = await supabase
+            .from("guests")
+            .select("name, email, attending, guest_count")
+            .eq("email", cleanEmail)
+            .not("rsvp_submitted_at", "is", null)
+            .limit(1);
+
+        if (error || !guests || guests.length === 0) {
             return {
                 success: false,
                 error: "No RSVP found for this email.",
             };
         }
 
+        const guest = guests[0];
+
         return {
             success: true,
             data: {
-                name: rsvp.name,
-                email: rsvp.email,
-                attending: rsvp.attending,
-                guestCount: rsvp.guestCount,
+                name: guest.name,
+                email: guest.email,
+                attending: guest.attending,
+                guestCount: guest.guest_count,
             },
         };
 
@@ -205,7 +235,7 @@ export async function checkRSVPStatus(email: string): Promise<GuestStatusData> {
 }
 
 // ============================================
-// MESSAGE BOARD MOCK STORAGE & ACTIONS
+// MESSAGE BOARD ACTIONS
 // ============================================
 
 interface Message {
@@ -215,21 +245,18 @@ interface Message {
     created_at: string;
 }
 
-const mockMessages: Message[] = [
-    {
-        id: "1",
-        name: "Admin",
-        message: "Welcome to our wedding message board!",
-        created_at: new Date().toISOString(),
-    }
-];
-
 export async function getMessages(): Promise<{ messages: Message[] }> {
-    // Sort by newest first
-    const sortedMessages = [...mockMessages].sort((a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    return { messages: sortedMessages };
+    const { data, error } = await supabase
+        .from("messages")
+        .select("id, name, message, created_at")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Failed to fetch messages:", error);
+        return { messages: [] };
+    }
+
+    return { messages: data || [] };
 }
 
 export async function submitMessage(formData: FormData): Promise<{ success: boolean; message: string }> {
@@ -241,14 +268,17 @@ export async function submitMessage(formData: FormData): Promise<{ success: bool
             return { success: false, message: "Name and message are required." };
         }
 
-        const newMessage: Message = {
-            id: Math.random().toString(36).substring(7),
-            name: name.trim(),
-            message: message.trim(),
-            created_at: new Date().toISOString(),
-        };
+        const { error } = await supabase
+            .from("messages")
+            .insert({
+                name: name.trim(),
+                message: message.trim(),
+            });
 
-        mockMessages.push(newMessage);
+        if (error) {
+            console.error("Failed to post message:", error);
+            return { success: false, message: "Failed to post message." };
+        }
 
         return { success: true, message: "Message posted successfully!" };
     } catch (error) {
