@@ -1,16 +1,24 @@
 "use client";
 
 import { motion, useAnimationFrame, AnimatePresence } from "framer-motion";
-import { Heart, Camera, Grid3X3, X, Loader2 } from "lucide-react";
+import { Heart, Grid3X3, X } from "lucide-react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import Image from "next/image";
 
-const TOTAL_PHOTOS = 20;
+// Our Story photos with captions
+const ourStoryPhotos = [
+    { id: 1, src: "/ourstory/Friends.webp", caption: "Friends" },
+    { id: 2, src: "/ourstory/First Date 2022.webp", caption: "First Date 2022" },
+    { id: 3, src: "/ourstory/Bake date.webp", caption: "Bake Date" },
+    { id: 4, src: "/ourstory/More dates.webp", caption: "More Dates" },
+    { id: 5, src: "/ourstory/First Trip.webp", caption: "First Trip" },
+    { id: 6, src: "/ourstory/Another trip.webp", caption: "Another Trip" },
+    { id: 7, src: "/ourstory/Proposal 2024.webp", caption: "Proposal 2024" },
+    { id: 8, src: "/ourstory/Wedding attendees hh.webp", caption: "Wedding Attendees" },
+];
 
-// Create photo items
-const photos = Array.from({ length: TOTAL_PHOTOS }, (_, i) => ({
-    id: i + 1,
-}));
+const TOTAL_PHOTOS = ourStoryPhotos.length;
 
 export function StorySection() {
     const [xPosition, setXPosition] = useState(0);
@@ -20,14 +28,19 @@ export function StorySection() {
     const [likedByMe, setLikedByMe] = useState<Record<number, boolean>>({});
     const [likingId, setLikingId] = useState<number | null>(null);
     const [isPaused, setIsPaused] = useState(false);
+    const [selectedPhoto, setSelectedPhoto] = useState<typeof ourStoryPhotos[0] | null>(null);
+
+    // Calculate total width for seamless looping
+    const cardWidth = 358; // ~350px card + 8px gap
+    const totalWidth = ourStoryPhotos.length * cardWidth;
 
     // Auto-scroll animation
-    useAnimationFrame((t) => {
-        if (isPaused || showGrid) return;
+    useAnimationFrame(() => {
+        if (isPaused || showGrid || selectedPhoto) return;
         const speed = 0.5;
         setXPosition((prev) => {
             const newPos = prev - speed;
-            if (newPos < -3000) return 0;
+            if (newPos < -totalWidth) return 0;
             return newPos;
         });
     });
@@ -61,13 +74,12 @@ export function StorySection() {
     }, [fetchLikes]);
 
     const handleLike = async (photoId: number) => {
-        if (likingId !== null) return; // prevent double-click
+        if (likingId !== null) return;
         setLikingId(photoId);
 
         const alreadyLiked = likedByMe[photoId];
         const increment = alreadyLiked ? -1 : 1;
 
-        // Optimistic update
         setLikes((prev) => ({
             ...prev,
             [photoId]: Math.max(0, (prev[photoId] || 0) + increment),
@@ -77,7 +89,6 @@ export function StorySection() {
         localStorage.setItem("photo_likes_mine", JSON.stringify(newLikedByMe));
 
         try {
-            // Check if row exists
             const { data: existing } = await supabase
                 .from("photo_likes")
                 .select("photo_id, like_count")
@@ -101,40 +112,36 @@ export function StorySection() {
         }
     };
 
-    // Shared card render
-    const renderPhotoCard = (item: { id: number }, keyPrefix: string, className: string) => (
+    // Shared card render with real images
+    const renderPhotoCard = (item: typeof ourStoryPhotos[0], keyPrefix: string, className: string) => (
         <div
             key={`${keyPrefix}-${item.id}`}
-            className={`${className} group`}
+            className={`${className} group cursor-pointer`}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onClick={() => setSelectedPhoto(item)}
         >
-            <div className="relative h-full rounded-3xl overflow-hidden shadow-2xl border-8 border-white bg-gradient-to-br from-burgundy/10 via-silver/20 to-burgundy/10 hover:shadow-burgundy/30 transition-all duration-500 hover:scale-[1.02]">
-                {/* Camera Icon Placeholder */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                        animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                        transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: item.id * 0.2,
-                        }}
-                        className="text-burgundy/30 group-hover:text-burgundy/50 transition-colors duration-300"
+            <div className="relative h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 hover:border-white hover:shadow-burgundy/30 transition-all duration-500 hover:scale-[1.02]">
+                {/* Actual Image */}
+                <Image
+                    src={item.src}
+                    alt={item.caption}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 280px, 350px"
+                />
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+
+                {/* Caption */}
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p
+                        className="text-white text-sm md:text-base font-semibold tracking-wide drop-shadow-lg"
+                        style={{ fontFamily: "var(--font-body)" }}
                     >
-                        <Camera size={80} strokeWidth={1.5} />
-                    </motion.div>
-                </div>
-
-                {/* Decorative Elements */}
-                <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-burgundy/20 rounded-tl-lg" />
-                <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-burgundy/20 rounded-br-lg" />
-
-                {/* Number Badge */}
-                <div className="absolute top-6 right-6 bg-white/80 backdrop-blur-sm text-burgundy px-3 py-1 rounded-full shadow-md">
-                    <span className="font-bold text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                        {item.id}
-                    </span>
+                        {item.caption}
+                    </p>
                 </div>
 
                 {/* Like Button */}
@@ -143,10 +150,10 @@ export function StorySection() {
                         e.stopPropagation();
                         handleLike(item.id);
                     }}
-                    className="absolute bottom-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-md hover:bg-white transition-all duration-200 hover:scale-110 group/like"
+                    className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md hover:bg-white transition-all duration-200 hover:scale-110 group/like z-10"
                 >
                     <Heart
-                        size={18}
+                        size={16}
                         className={`transition-colors duration-200 ${likedByMe[item.id]
                             ? "text-burgundy fill-burgundy"
                             : "text-burgundy/50 group-hover/like:text-burgundy"
@@ -154,7 +161,7 @@ export function StorySection() {
                         fill={likedByMe[item.id] ? "currentColor" : "none"}
                     />
                     <span
-                        className="text-sm font-semibold text-burgundy tabular-nums"
+                        className="text-xs font-semibold text-burgundy tabular-nums"
                         style={{ fontFamily: "var(--font-body)" }}
                     >
                         {likes[item.id] || 0}
@@ -207,11 +214,14 @@ export function StorySection() {
                             style={{ x: xPosition }}
                             className="flex gap-6 md:gap-8 absolute left-0 h-full items-center"
                         >
-                            {photos.map((item) =>
+                            {ourStoryPhotos.map((item) =>
                                 renderPhotoCard(item, "first", "flex-shrink-0 w-[280px] md:w-[350px] h-[320px] md:h-[400px]")
                             )}
-                            {photos.map((item) =>
+                            {ourStoryPhotos.map((item) =>
                                 renderPhotoCard(item, "second", "flex-shrink-0 w-[280px] md:w-[350px] h-[320px] md:h-[400px]")
+                            )}
+                            {ourStoryPhotos.map((item) =>
+                                renderPhotoCard(item, "third", "flex-shrink-0 w-[280px] md:w-[350px] h-[320px] md:h-[400px]")
                             )}
                         </motion.div>
 
@@ -265,7 +275,7 @@ export function StorySection() {
                                         className="text-burgundy text-2xl"
                                         style={{ fontFamily: "var(--font-display)" }}
                                     >
-                                        All Photos
+                                        Our Story
                                     </h3>
                                     <span className="text-silver-dark text-sm ml-2">
                                         {TOTAL_PHOTOS} photos
@@ -287,11 +297,11 @@ export function StorySection() {
                                 animate="show"
                                 variants={{
                                     hidden: {},
-                                    show: { transition: { staggerChildren: 0.04 } },
+                                    show: { transition: { staggerChildren: 0.06 } },
                                 }}
-                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"
+                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6"
                             >
-                                {photos.map((item) => (
+                                {ourStoryPhotos.map((item) => (
                                     <motion.div
                                         key={item.id}
                                         variants={{
@@ -304,6 +314,53 @@ export function StorySection() {
                                 ))}
                             </motion.div>
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Lightbox Modal */}
+            <AnimatePresence>
+                {selectedPhoto && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-lg flex items-center justify-center p-4"
+                        onClick={() => setSelectedPhoto(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                            className="relative max-w-4xl max-h-[85vh] w-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="relative w-full h-[70vh] rounded-2xl overflow-hidden shadow-2xl">
+                                <Image
+                                    src={selectedPhoto.src}
+                                    alt={selectedPhoto.caption}
+                                    fill
+                                    className="object-contain bg-black"
+                                    sizes="(max-width: 768px) 100vw, 80vw"
+                                    priority
+                                />
+                            </div>
+                            <div className="text-center mt-4">
+                                <p
+                                    className="text-white text-lg font-semibold tracking-wide"
+                                    style={{ fontFamily: "var(--font-body)" }}
+                                >
+                                    {selectedPhoto.caption}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedPhoto(null)}
+                                className="absolute -top-2 -right-2 bg-white/90 text-charcoal hover:bg-white hover:text-burgundy p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                            >
+                                <X size={20} />
+                            </button>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

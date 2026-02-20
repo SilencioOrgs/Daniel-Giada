@@ -29,7 +29,7 @@ export const WEDDING_DETAILS = {
             mapLink: "https://maps.google.com/?q=Patio+De+Manila+Malate",
         }
     },
-    giftGuide: "With all that we have we've been truly blessed. Your presence and prayers are all that we request, but if you desire to give nonetheless, a monetary gift is the one we humbly suggest."
+    giftGuide: "With all that we have we've been truly blessed, your presence and prayers are all that we request. But if you desire to give nonetheless, a monetary gift is the one we humbly suggest."
 };
 
 export const DRESS_CODE = {
@@ -101,7 +101,7 @@ export const ENTOURAGE = {
     flowerLadies: [
         "John Marie F. Nepomuceno",
         "Christianne F. Nepomuceno",
-        "Phoebe Adia Reese Q. Flores"
+        "Phoebe Adia Reese O. Flores"
     ],
 
     flowerGirls: [

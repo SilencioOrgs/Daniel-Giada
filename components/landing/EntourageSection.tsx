@@ -239,7 +239,7 @@ export function EntourageSection() {
                         {/* Flower Girls and Ladies - Side by Side Below */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <SilverCard className="h-full">
-                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Girls (4)</h4>
+                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Girls</h4>
                                 <div className="space-y-2 text-center">
                                     {ENTOURAGE.flowerGirls.map((girl, i) => (
                                         <p key={`girl-${i}`} className="text-charcoal">{girl}</p>
@@ -248,7 +248,7 @@ export function EntourageSection() {
                             </SilverCard>
 
                             <SilverCard className="h-full">
-                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Ladies (3)</h4>
+                                <h4 className="text-burgundy text-sm font-semibold uppercase tracking-widest mb-4 text-center">Flower Ladies</h4>
                                 <div className="space-y-2 text-center">
                                     {ENTOURAGE.flowerLadies.map((lady, i) => (
                                         <p key={`lady-${i}`} className="text-charcoal">{lady}</p>

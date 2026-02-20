@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Gift } from "lucide-react";
+import Image from "next/image";
 
 export function GiftGuideSection() {
     return (
@@ -48,7 +49,7 @@ export function GiftGuideSection() {
                             className="text-silver-light/80 text-sm max-w-md mx-auto"
                             style={{ fontFamily: "var(--font-body)" }}
                         >
-                            Your presence is the greatest gift. However, if you wish to bless us further, you may send your gifts through the following:
+                            With all that we have we&apos;ve been truly blessed, your presence and prayers are all that we request. But if you desire to give nonetheless, a monetary gift is the one we humbly suggest.
                         </p>
                     </motion.div>
 
@@ -66,26 +67,18 @@ export function GiftGuideSection() {
                                 className="text-silver-light text-lg font-semibold mb-6 tracking-wider uppercase"
                                 style={{ fontFamily: "var(--font-body)" }}
                             >
-                                GCash
+                                GoTyme Bank
                             </h3>
 
-                            {/* QR Code Placeholder */}
-                            <div className="w-48 h-48 mx-auto mb-6 bg-white/10 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="w-16 h-16 mx-auto mb-2 bg-white/10 rounded-lg flex items-center justify-center">
-                                        <svg className="w-8 h-8 text-silver-light/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                                            <rect x="3" y="14" width="7" height="7" rx="1" />
-                                            <rect x="14" y="14" width="3" height="3" rx="0.5" />
-                                            <rect x="18" y="18" width="3" height="3" rx="0.5" />
-                                            <rect x="14" y="18" width="3" height="3" rx="0.5" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-silver-light/50 text-xs" style={{ fontFamily: "var(--font-body)" }}>
-                                        QR Code
-                                    </span>
-                                </div>
+                            {/* QR Code */}
+                            <div className="w-48 h-auto mx-auto mb-6 rounded-lg overflow-hidden">
+                                <Image
+                                    src="/gotyme.jpeg"
+                                    alt="GoTyme Bank QR Code"
+                                    width={400}
+                                    height={500}
+                                    className="w-full h-auto rounded-lg"
+                                />
                             </div>
 
                             {/* Account Info */}
@@ -94,7 +87,13 @@ export function GiftGuideSection() {
                                     className="text-white text-sm font-medium"
                                     style={{ fontFamily: "var(--font-body)" }}
                                 >
-                                    +639123456789
+                                    GIADA FLORES
+                                </p>
+                                <p
+                                    className="text-silver-light/70 text-xs"
+                                    style={{ fontFamily: "var(--font-body)" }}
+                                >
+                                    ••••••• 8292
                                 </p>
                             </div>
                         </motion.div>
@@ -111,26 +110,18 @@ export function GiftGuideSection() {
                                 className="text-silver-light text-lg font-semibold mb-6 tracking-wider uppercase"
                                 style={{ fontFamily: "var(--font-body)" }}
                             >
-                                Bank Transfer
+                                Landbank
                             </h3>
 
-                            {/* QR Code Placeholder */}
-                            <div className="w-48 h-48 mx-auto mb-6 bg-white/10 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="w-16 h-16 mx-auto mb-2 bg-white/10 rounded-lg flex items-center justify-center">
-                                        <svg className="w-8 h-8 text-silver-light/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                                            <rect x="3" y="14" width="7" height="7" rx="1" />
-                                            <rect x="14" y="14" width="3" height="3" rx="0.5" />
-                                            <rect x="18" y="18" width="3" height="3" rx="0.5" />
-                                            <rect x="14" y="18" width="3" height="3" rx="0.5" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-silver-light/50 text-xs" style={{ fontFamily: "var(--font-body)" }}>
-                                        QR Code
-                                    </span>
-                                </div>
+                            {/* QR Code */}
+                            <div className="w-48 h-auto mx-auto mb-6 rounded-lg overflow-hidden">
+                                <Image
+                                    src="/landbank.jpeg"
+                                    alt="Landbank QR Code"
+                                    width={400}
+                                    height={500}
+                                    className="w-full h-auto rounded-lg"
+                                />
                             </div>
 
                             {/* Account Info */}
@@ -139,7 +130,13 @@ export function GiftGuideSection() {
                                     className="text-white text-sm font-medium"
                                     style={{ fontFamily: "var(--font-body)" }}
                                 >
-                                    Bank Acc: 123456789
+                                    GIADA FLORES
+                                </p>
+                                <p
+                                    className="text-silver-light/70 text-xs"
+                                    style={{ fontFamily: "var(--font-body)" }}
+                                >
+                                    Account Number: XXXXXX9421
                                 </p>
                             </div>
                         </motion.div>
