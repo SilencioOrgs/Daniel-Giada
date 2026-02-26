@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { MessageSquareHeart, ArrowLeft, PenLine } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { MessageModal } from "./MessageModal";
 
 interface Message {
@@ -28,6 +29,14 @@ const stickyColors = [
 
 // Random rotations for natural look
 const rotations = [-3, -2, -1, 0, 1, 2, 3];
+
+const timelineItems = [
+    { time: "2:00 PM", title: "Wedding Ceremony" },
+    { time: "4:00 PM", title: "Snap & Snacks" },
+    { time: "5:15 PM", title: "Start of Reception Program" },
+    { time: "6:00 PM", title: "Dinner Time" },
+    { time: "8:30 PM", title: "Send Off" },
+];
 
 export function MessageBoard({ messages }: MessageBoardProps) {
     const [showMessageModal, setShowMessageModal] = useState(false);
@@ -69,15 +78,17 @@ export function MessageBoard({ messages }: MessageBoardProps) {
                     <div className="text-center">
                         {/* Couple Photo */}
                         <motion.div
-                            className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-wedding-gold/40 shadow-2xl"
+                            className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-wedding-gold/40 shadow-2xl"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <img
-                                src="/photos/image0/IMG_2728.webp"
-                                alt="Carl & Shania"
-                                className="w-full h-full object-cover"
+                            <Image
+                                src="/ourstory/Wedding attendees hh.webp"
+                                alt="Giada and Daniel"
+                                fill
+                                className="object-cover"
+                                sizes="160px"
                             />
                         </motion.div>
 
@@ -96,7 +107,7 @@ export function MessageBoard({ messages }: MessageBoardProps) {
                                 className="text-wedding-gold text-4xl md:text-5xl lg:text-6xl mb-4"
                                 style={{ fontFamily: "var(--font-display)" }}
                             >
-                                Carl & Shania
+                                Giada & Daniel
                             </h1>
                             <div className="w-16 h-[1px] bg-wedding-burgundy mx-auto mb-6" />
                             <p
@@ -122,6 +133,52 @@ export function MessageBoard({ messages }: MessageBoardProps) {
                                 <PenLine size={16} />
                                 Add Your Wish
                             </button>
+                        </motion.div>
+
+                        <motion.div
+                            className="max-w-3xl mx-auto mt-10 bg-white/95 text-charcoal rounded-2xl p-6 md:p-10 shadow-2xl border border-black/5"
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            <div className="flex flex-col items-center text-center">
+                                <div className="relative w-24 h-16 mb-2">
+                                    <Image
+                                        src="/ourstory/Wedding attendees hh.webp"
+                                        alt="Giada and Daniel timeline"
+                                        fill
+                                        className="object-cover rounded-md"
+                                        sizes="96px"
+                                    />
+                                </div>
+                                <p className="text-xs tracking-[0.35em] uppercase text-charcoal/60 mb-2" style={{ fontFamily: "var(--font-ornate)" }}>
+                                    DG
+                                </p>
+                                <h2 className="text-4xl md:text-5xl tracking-[0.12em] uppercase text-charcoal/80 mb-8" style={{ fontFamily: "var(--font-display)" }}>
+                                    Wedding Timeline
+                                </h2>
+                            </div>
+
+                            <div className="relative max-w-xl mx-auto pl-8 md:pl-12">
+                                <div className="absolute left-1 top-0 bottom-0 w-[2px] bg-charcoal/20" />
+                                <div className="space-y-7">
+                                    {timelineItems.map((item) => (
+                                        <div key={item.time} className="relative">
+                                            <div className="absolute -left-[1.12rem] top-2 w-3.5 h-3.5 rounded-full bg-wedding-burgundy" />
+                                            <p className="text-sm md:text-base font-semibold tracking-[0.15em] uppercase text-charcoal/80" style={{ fontFamily: "var(--font-body)" }}>
+                                                {item.time}
+                                            </p>
+                                            <p className="text-lg md:text-xl uppercase tracking-[0.08em] text-charcoal/80" style={{ fontFamily: "var(--font-display)" }}>
+                                                {item.title}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <p className="mt-10 text-center text-sm md:text-base tracking-[0.18em] uppercase text-charcoal/60" style={{ fontFamily: "var(--font-body)" }}>
+                                We are grateful that you could be with us today.
+                            </p>
                         </motion.div>
                     </div>
                 </div>
@@ -202,7 +259,7 @@ export function MessageBoard({ messages }: MessageBoardProps) {
                                                     color: colorScheme.text,
                                                 }}
                                             >
-                                                — {msg.name}
+                                                &mdash; {msg.name}
                                             </p>
                                         </div>
                                     </motion.div>
